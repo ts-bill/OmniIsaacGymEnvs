@@ -49,6 +49,7 @@ def import_tasks():
     from omniisaacgymenvs.tasks.warp.ant import AntLocomotionTask as AntLocomotionTaskWarp
     from omniisaacgymenvs.tasks.warp.cartpole import CartpoleTask as CartpoleTaskWarp
     from omniisaacgymenvs.tasks.warp.humanoid import HumanoidLocomotionTask as HumanoidLocomotionTaskWarp
+    from omniisaacgymenvs.tasks.a1 import A1Task
 
     # Mappings from strings to environments
     task_map = {
@@ -71,6 +72,7 @@ def import_tasks():
         "ShadowHand": ShadowHandTask,
         "ShadowHandOpenAI_FF": ShadowHandTask,
         "ShadowHandOpenAI_LSTM": ShadowHandTask,
+        "A1": A1Task,
     }
 
     task_map_warp = {
