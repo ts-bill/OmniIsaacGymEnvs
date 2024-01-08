@@ -1,5 +1,5 @@
 # used to create the object
-name: A1
+name: Go1
 
 physics_engine: ${..physics_engine}
 
@@ -13,39 +13,38 @@ env:
   controlFrequencyInv: 2
 
   baseInitState:
-    pos: [0.0, 0.0, 0.42] # x,y,z [m]
+    pos: [0.0, 0.0, 0.35] # x,y,z [m]
     rot: [0.0, 0.0, 0.0, 1.0] # x,y,z,w [quat]
     vLinear: [0.0, 0.0, 0.0]  # x,y,z [m/s]
     vAngular: [0.0, 0.0, 0.0]  # x,y,z [rad/s]
 
   randomCommandVelocityRanges:
     linear_x: [-1., 1.] # min max [m/s]
-    linear_y: [-1., 1.]   # min max [m/s]
+    linear_y: [-2., 2.]   # min max [m/s]
     yaw: [-1., 1.]          # min max [rad/s]
 
   control:
     # PD Drive parameters:
-    stiffness: 85.0 #85.0  # [N*m/rad]
-    damping: 2.0 #2.0     # [N*m*s/rad]
-    # action scale: target angle = actionScale * action + defaultAngle
-    #actionScale: 13.5
-    actionScale: 13.5 #0.25
+    stiffness: 85.0  # [N*m/rad]
+    damping: 2.0     # [N*m*s/rad]
+    actionScale: 13.5
 
   defaultJointAngles:  # = target angles when action = 0.0
+  
     FL_hip_joint: 0.1    # [rad]
     RL_hip_joint: 0.1    # [rad]
     FR_hip_joint: -0.1   # [rad]
     RR_hip_joint: -0.1   # [rad]
-
-    FL_thigh_joint: 0.8     # [rad]
-    RL_thigh_joint: 1.0    # [rad]
-    FR_thigh_joint: 0.8     # [rad]
-    RR_thigh_joint: 1.0    # [rad]
-
-    FL_calf_joint: -1.5    # [rad]
+    
+    FL_thigh_joint: 0.8   # [rad]
+    RL_thigh_joint: 1.0  # [rad]
+    FR_thigh_joint: 0.8   # [rad]
+    RR_thigh_joint: 1.0   # [rad]
+    
+    FL_calf_joint: -1.5   # [rad]
     RL_calf_joint: -1.5    # [rad]
-    FR_calf_joint: -1.5    # [rad]
-    RR_calf_joint: -1.5     # [rad]
+    FR_calf_joint: -1.5   # [rad]
+    RR_calf_joint: -1.5    # [rad]
 
   learn:
     # rewards
@@ -66,7 +65,7 @@ env:
     episodeLength_s: 50
 
 sim:
-  dt: 0.01
+  dt: 0.01 #0.005
   use_gpu_pipeline: ${eq:${...pipeline},"gpu"}
   gravity: [0.0, 0.0, -9.81]
   add_ground_plane: True
@@ -75,7 +74,7 @@ sim:
   disable_contact_processing: False
 
   # set to True if you use camera sensors in the environment
-  enable_cameras: False
+  enable_cameras: False #True
 
   default_physics_material:
     static_friction: 1.0
@@ -109,7 +108,7 @@ sim:
     gpu_temp_buffer_capacity: 33554432
     gpu_max_num_partitions: 8
 
-  A1:
+  Go1:
     # -1 to use default values
     override_usd_defaults: False
     enable_self_collisions: False

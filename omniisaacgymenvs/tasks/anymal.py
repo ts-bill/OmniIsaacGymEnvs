@@ -92,7 +92,6 @@ class AnymalTask(RLTask):
         self.max_episode_length = int(self.max_episode_length_s / self.dt + 0.5)
         self.Kp = self._task_cfg["env"]["control"]["stiffness"]
         self.Kd = self._task_cfg["env"]["control"]["damping"]
-
         for key in self.rew_scales.keys():
             self.rew_scales[key] *= self.dt
 

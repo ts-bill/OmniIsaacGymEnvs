@@ -122,4 +122,3 @@ sim:
     # per-body
     density: -1
     max_depenetration_velocity: 100.0
-

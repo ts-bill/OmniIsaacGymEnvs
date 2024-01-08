@@ -27,25 +27,29 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from typing import Optional
-
 import numpy as np
 import torch
 from omni.isaac.core.prims import RigidPrimView
 from omni.isaac.core.robots.robot import Robot
 from omni.isaac.core.utils.nucleus import get_assets_root_path
 from omni.isaac.core.utils.stage import add_reference_to_stage
+
+import numpy as np
+import torch
+
 from pxr import PhysxSchema
 
-class A1(Robot):
+class Go1(Robot):
     def __init__(
         self,
         prim_path: str,
-        name: Optional[str] = "A1",
+        name: Optional[str] = "Go1",
         usd_path: Optional[str] = None,
         translation: Optional[np.ndarray] = None,
         orientation: Optional[np.ndarray] = None,
     ) -> None:
-        """[summary]"""
+        """[summary]
+        """
         
         self._usd_path = usd_path
         self._name = name
@@ -54,8 +58,14 @@ class A1(Robot):
             assets_root_path = get_assets_root_path()
             if assets_root_path is None:
                 carb.log_error("Could not find nucleus server with /Isaac folder")
-            self._usd_path = assets_root_path + "/Isaac/Robots/Unitree/a1.usd"
+            self._usd_path = assets_root_path + "/Isaac/Robots/Unitree/go1.usd"
+            #self._usd_path = "/Robots_for_Omniverse/openUSD_assets/UnitreeRobotics/go1/go1.usd"
+                
         add_reference_to_stage(self._usd_path, prim_path)
+        #assets_root_path = get_assets_root_path()
+        #self._usd_path = assets_root_path + "/Isaac/Robots/Unitree/go1.usd"
+        # /home/ctaw/.local/share/ov/pkg/isaac_sim-2022.2.1/GO1_USD/go1_instanceable.usd
+        # self._usd_path = "/home/ctaw/.local/share/ov/pkg/isaac_sim-2022.2.1/GO1_USD/go1_instanceable.usd"
 
         super().__init__(
             prim_path=prim_path,
@@ -65,18 +75,30 @@ class A1(Robot):
             articulation_controller=None,
         )
 
+        # self._dof_names = ["LF_HAA",
+        #                    "LH_HAA",
+        #                    "RF_HAA",
+        #                    "RH_HAA",
+        #                    "LF_HFE",
+        #                    "LH_HFE",
+        #                    "RF_HFE",
+        #                    "RH_HFE",
+        #                    "LF_KFE",
+        #                    "LH_KFE",
+        #                    "RF_KFE",
+        #                    "RH_KFE"]
         self._dof_names = ["FL_hip_joint",
-                           "RL_hip_joint",
-                           "FR_hip_joint",
-                           "RR_hip_joint",
-                           "FL_thigh_joint",
-                           "RL_thigh_joint",
-                           "FR_thigh_joint",
-                           "RR_thigh_joint",
-                           "FL_calf_joint",
-                           "RL_calf_joint",
-                           "FR_calf_joint",
-                           "RR_calf_joint"]
+                        "RL_hip_joint",
+                        "FR_hip_joint",
+                        "RR_hip_joint",
+                        "FL_thigh_joint",
+                        "RL_thigh_joint",
+                        "FR_thigh_joint",
+                        "RR_thigh_joint",
+                        "FL_calf_joint",
+                        "RL_calf_joint",
+                        "FR_calf_joint",
+                        "RR_calf_joint"]
 
     @property
     def dof_names(self):

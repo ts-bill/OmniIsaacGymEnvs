@@ -49,7 +49,11 @@ def import_tasks():
     from omniisaacgymenvs.tasks.warp.ant import AntLocomotionTask as AntLocomotionTaskWarp
     from omniisaacgymenvs.tasks.warp.cartpole import CartpoleTask as CartpoleTaskWarp
     from omniisaacgymenvs.tasks.warp.humanoid import HumanoidLocomotionTask as HumanoidLocomotionTaskWarp
+    # A1
     from omniisaacgymenvs.tasks.a1 import A1Task
+    from omniisaacgymenvs.tasks.a1_terrain import A1TerrainTask
+    # Go1
+    from omniisaacgymenvs.tasks.go1 import Go1Task
 
     # Mappings from strings to environments
     task_map = {
@@ -73,6 +77,8 @@ def import_tasks():
         "ShadowHandOpenAI_FF": ShadowHandTask,
         "ShadowHandOpenAI_LSTM": ShadowHandTask,
         "A1": A1Task,
+        "A1Terrain": A1TerrainTask,
+        "Go1": Go1Task
     }
 
     task_map_warp = {
@@ -89,11 +95,10 @@ def initialize_task(config, env, init_sim=True):
 
     sim_config = SimConfig(config)
     task_map, task_map_warp = import_tasks()
-
     cfg = sim_config.config
     if cfg["warp"]:
         task_map = task_map_warp
-
+    
     task = task_map[cfg["task_name"]](
         name=cfg["task_name"], sim_config=sim_config, env=env
     )

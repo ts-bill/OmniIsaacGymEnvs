@@ -5,8 +5,9 @@ task_name: ${task.name}
 experiment: ''
 
 # if set to positive integer, overrides the default number of environments
-#num_envs: 500 #for Anymal
-num_envs: 10 #for A1
+num_envs: 300 #for Anymal
+#num_envs: 10 #for A1
+#num_envs: '' #Default
 # seed - set to -1 to choose random seed
 seed: 42
 # set to True for deterministic performance
@@ -29,7 +30,7 @@ rl_device: 'cuda:0'
 multi_gpu: False
 
 ## PhysX arguments
-num_threads: 10 # Number of worker threads used by PhysX - for CPU PhysX only.
+num_threads: 5 # Number of worker threads used by PhysX - for CPU PhysX only.
 solver_type: 1 # 0: pgs, 1: tgs
 
 # RLGames Arguments
@@ -62,7 +63,7 @@ wandb_activate: False
 wandb_group: ''
 wandb_name: ${train.params.config.name}
 wandb_entity: ''
-wandb_project: 'my-anymal'
+wandb_project: 'ppo-unitree'
 
 # path to a kit app file
 kit_app: ''

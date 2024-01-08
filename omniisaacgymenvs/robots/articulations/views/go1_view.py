@@ -32,24 +32,25 @@ from omni.isaac.core.articulations import ArticulationView
 from omni.isaac.core.prims import RigidPrimView
 
 
-class A1View(ArticulationView):
+class Go1View(ArticulationView):
     def __init__(
         self,
         prim_paths_expr: str,
-        name: Optional[str] = "A1View",
+        name: Optional[str] = "Go1View",
         track_contact_forces=False,
         prepare_contact_sensors=False
     ) -> None:
-        """[summary]"""
+        """[summary]
+        """
 
         super().__init__(
             prim_paths_expr=prim_paths_expr,
             name=name,
             reset_xform_properties=False
         )
-        self._knees = RigidPrimView(prim_paths_expr="/World/envs/.*/a1/.*_thigh",
+        self._knees = RigidPrimView(prim_paths_expr="/World/envs/.*/go1/.*_thigh",
             name="knees_view", reset_xform_properties=False, track_contact_forces=track_contact_forces, prepare_contact_sensors=prepare_contact_sensors)
-        self._base = RigidPrimView(prim_paths_expr="/World/envs/.*/a1/trunk",
+        self._base = RigidPrimView(prim_paths_expr="/World/envs/.*/go1/trunk",
             name="base_view", reset_xform_properties=False, track_contact_forces=track_contact_forces, prepare_contact_sensors=prepare_contact_sensors)
 
     def get_knee_transforms(self):
