@@ -47,9 +47,9 @@ class A1View(ArticulationView):
             name=name,
             reset_xform_properties=False
         )
-        self._knees = RigidPrimView(prim_paths_expr="/World/envs/.*/a1/.*_thigh",
+        self._knees = RigidPrimView(prim_paths_expr="/World/envs/.*/a1_instanceable_meshes/.*_thigh",
             name="knees_view", reset_xform_properties=False, track_contact_forces=track_contact_forces, prepare_contact_sensors=prepare_contact_sensors)
-        self._base = RigidPrimView(prim_paths_expr="/World/envs/.*/a1/trunk",
+        self._base = RigidPrimView(prim_paths_expr="/World/envs/.*/a1_instanceable_meshes/trunk",
             name="base_view", reset_xform_properties=False, track_contact_forces=track_contact_forces, prepare_contact_sensors=prepare_contact_sensors)
 
     def get_knee_transforms(self):

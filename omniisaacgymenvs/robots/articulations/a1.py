@@ -82,7 +82,7 @@ class A1(Robot):
     def dof_names(self):
         return self._dof_names
 
-    def set_anymal_properties(self, stage, prim):
+    def set_a1_properties(self, stage, prim):
         for link_prim in prim.GetChildren():
             if link_prim.HasAPI(PhysxSchema.PhysxRigidBodyAPI): 
                 rb = PhysxSchema.PhysxRigidBodyAPI.Get(stage, link_prim.GetPrimPath())
@@ -97,6 +97,7 @@ class A1(Robot):
         for link_prim in prim.GetChildren():
             if link_prim.HasAPI(PhysxSchema.PhysxRigidBodyAPI): 
                 if "_hip" not in str(link_prim.GetPrimPath()):
+                    print("Debug=========",link_prim)
                     rb = PhysxSchema.PhysxRigidBodyAPI.Get(stage, link_prim.GetPrimPath())
                     rb.CreateSleepThresholdAttr().Set(0)
                     cr_api = PhysxSchema.PhysxContactReportAPI.Apply(link_prim)

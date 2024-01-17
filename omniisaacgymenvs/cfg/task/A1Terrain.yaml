@@ -25,7 +25,7 @@ env:
     slopeTreshold: 0.5
 
   baseInitState:
-    pos: [0.0, 0.0, 0.62] # x,y,z [m]
+    pos: [0.0, 0.0, 0.42] # x,y,z [m]
     rot: [1.0, 0.0, 0.0, 0.0] # w,x,y,z [quat]
     vLinear: [0.0, 0.0, 0.0]  # x,y,z [m/s]
     vAngular: [0.0, 0.0, 0.0]  # x,y,z [rad/s]
@@ -38,29 +38,28 @@ env:
 
   control:
     # PD Drive parameters:
-    stiffness: 80.0  # [N*m/rad]
-    damping: 2.0     # [N*m*s/rad]
+    stiffness: 80.0 #80.0  # [N*m/rad]
+    damping: 2.0 #2.0     # [N*m*s/rad]
     # action scale: target angle = actionScale * action + defaultAngle
-    actionScale: 0.5
+    actionScale: 0.5 #0.5
     # decimation: Number of control action updates @ sim DT per policy DT
     decimation: 4
 
   defaultJointAngles:  # = target angles when action = 0.0
-    LF_HAA: 0.03    # [rad]
-    LH_HAA: 0.03    # [rad]
-    RF_HAA: -0.03   # [rad]
-    RH_HAA: -0.03   # [rad]
+    FL_hip_joint: 0.1    # [rad]
+    RL_hip_joint: 0.1    # [rad]
+    FR_hip_joint: -0.1   # [rad]
+    RR_hip_joint: -0.1   # [rad]
 
-    LF_HFE: 0.4     # [rad]
-    LH_HFE: -0.4    # [rad]
-    RF_HFE: 0.4     # [rad]
-    RH_HFE: -0.4    # [rad]
+    FL_thigh_joint: 0.8     # [rad]
+    RL_thigh_joint: 1.0    # [rad]
+    FR_thigh_joint: 0.8     # [rad]
+    RR_thigh_joint: 1.0    # [rad]
 
-    LF_KFE: -0.8    # [rad]
-    LH_KFE: 0.8     # [rad]
-    RF_KFE: -0.8    # [rad]
-    RH_KFE: 0.8     # [rad]
-
+    FL_calf_joint: -1.5    # [rad]
+    RL_calf_joint: -1.5    # [rad]
+    FR_calf_joint: -1.5    # [rad]
+    RR_calf_joint: -1.5     # [rad]
 
   learn:
     # rewards
@@ -107,6 +106,7 @@ sim:
   use_gpu_pipeline: ${eq:${...pipeline},"gpu"}
   gravity: [0.0, 0.0, -9.81]
   add_ground_plane: False
+  add_distant_light: False
   use_flatcache: True
   enable_scene_query_support: False
   disable_contact_processing: True

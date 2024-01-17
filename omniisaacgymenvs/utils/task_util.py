@@ -54,6 +54,7 @@ def import_tasks():
     from omniisaacgymenvs.tasks.a1_terrain import A1TerrainTask
     # Go1
     from omniisaacgymenvs.tasks.go1 import Go1Task
+    from omniisaacgymenvs.tasks.go1_terrain import Go1TerrainTask
 
     # Mappings from strings to environments
     task_map = {
@@ -78,7 +79,8 @@ def import_tasks():
         "ShadowHandOpenAI_LSTM": ShadowHandTask,
         "A1": A1Task,
         "A1Terrain": A1TerrainTask,
-        "Go1": Go1Task
+        "Go1": Go1Task,
+        "Go1Terrain": Go1TerrainTask
     }
 
     task_map_warp = {

@@ -387,7 +387,7 @@ class AnymalTerrainTask(RLTask):
         self.base_pos, self.base_quat = self._anymals.get_world_poses(clone=False)
         self.base_velocities = self._anymals.get_velocities(clone=False)
         self.knee_pos, self.knee_quat = self._anymals._knees.get_world_poses(clone=False)
-
+        print("debug1=================",self.base_velocities)
     def pre_physics_step(self, actions):
         if not self.world.is_playing():
             return
@@ -419,6 +419,7 @@ class AnymalTerrainTask(RLTask):
                 self.push_robots()
 
             # prepare quantities
+            #print("Exampledebug2222=================",self.base_quat,self.base_velocities)
             self.base_lin_vel = quat_rotate_inverse(self.base_quat, self.base_velocities[:, 0:3])
             self.base_ang_vel = quat_rotate_inverse(self.base_quat, self.base_velocities[:, 3:6])
             self.projected_gravity = quat_rotate_inverse(self.base_quat, self.gravity_vec)

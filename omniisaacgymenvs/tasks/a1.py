@@ -5,6 +5,7 @@ from omniisaacgymenvs.tasks.utils.usd_utils import set_drive
 
 from omni.isaac.core.utils.prims import get_prim_at_path
 
+import omni.usd
 from omni.isaac.core.utils.torch.rotations import *
 import omni.usd
 import numpy as np
@@ -70,7 +71,7 @@ class A1Task(RLTask):
             self.rew_scales[key] *= self.dt
 
         self._num_envs = self._task_cfg["env"]["numEnvs"]
-        self._a1_translation = torch.tensor([0.0, 0.0, 0.2])
+        self._a1_translation = torch.tensor([0.0, 0.0, 0.4])
         self._env_spacing = self._task_cfg["env"]["envSpacing"]
 
         return
@@ -78,8 +79,10 @@ class A1Task(RLTask):
     def set_up_scene(self, scene) -> None:
         self.get_a1()
         super().set_up_scene(scene)
-        self._a1s = A1View(prim_paths_expr="/World/envs/.*/a1", 
-                               name="a1view")
+        self._a1s = A1View(prim_paths_expr="/World/envs/.*/a1_instanceable_meshes", #prim_path name
+                               name="a1view"
+                               #track_contact_forces=True
+                               )
         scene.add(self._a1s)
         scene.add(self._a1s._knees)
         scene.add(self._a1s._base)
@@ -87,10 +90,15 @@ class A1Task(RLTask):
         return
 
     def get_a1(self):
-        a1 = A1(prim_path=self.default_zero_env_path + "/a1", 
+        a1 = A1(prim_path=self.default_zero_env_path + "/a1_instanceable_meshes", #prim_path name
                     name="A1",
+                    usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/test6.usd", #file name
                     translation=self._a1_translation)
-        self._sim_config.apply_articulation_settings("A1", get_prim_at_path(a1.prim_path), self._sim_config.parse_actor_config("A1"))
+        self._sim_config.apply_articulation_settings(
+            "A1", 
+            get_prim_at_path(a1.prim_path), 
+            self._sim_config.parse_actor_config("A1")
+            )
 
         # Configure joint properties
         joint_paths = []
@@ -151,6 +159,8 @@ class A1Task(RLTask):
         return observations
 
     def pre_physics_step(self, actions) -> None:
+        # actions: (num_envs, 12) [-1, 1]
+        #print(actions)
         if not self._env._world.is_playing():
             return
 
@@ -200,7 +210,10 @@ class A1Task(RLTask):
         self.last_dof_vel[env_ids] = 0.
 
     def post_reset(self):
-        
+        #stage = omni.usd.get_context().get_stage()
+        #ground_prim = stage.GetPrimAtPath("/World/defaultGroundPlane/GroundPlane/CollisionPlane")
+        #ground_prim.GetAttribute("physics:collisionEnabled").Set(False)
+        #ground_prim.GetAttribute("physics:collisionEnabled").Set(True)
         self.initial_root_pos, self.initial_root_rot = self._a1s.get_world_poses()
         self.current_targets = self.default_dof_pos.clone()
 
@@ -229,10 +242,10 @@ class A1Task(RLTask):
         # randomize all envs
         indices = torch.arange(self._a1s.count, dtype=torch.int64, device=self._device)
         self.reset_idx(indices)
-        stage = omni.usd.get_context().get_stage()
-        ground_prim = stage.GetPrimAtPath("/World/defaultGroundPlane/GroundPlane/CollisionPlane")
-        ground_prim.GetAttribute("physics:collisionEnabled").Set(False)
-        ground_prim.GetAttribute("physics:collisionEnabled").Set(True)
+        #stage = omni.usd.get_context().get_stage()
+        #ground_prim = stage.GetPrimAtPath("/World/defaultGroundPlane/GroundPlane/CollisionPlane")
+        #ground_prim.GetAttribute("physics:collisionEnabled").Set(False)
+        #ground_prim.GetAttribute("physics:collisionEnabled").Set(True)
     def calculate_metrics(self) -> None:
         torso_position, torso_rotation = self._a1s.get_world_poses(clone=False)
         root_velocities = self._a1s.get_velocities(clone=False)

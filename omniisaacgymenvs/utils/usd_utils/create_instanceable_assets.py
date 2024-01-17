@@ -128,17 +128,17 @@ def convert_asset_instanceable(asset_usd_path, source_prim_path, save_as_path=No
         omni.usd.get_context().save_as_stage(save_as_path)
 
 
-from omni.isaac.core.utils.nucleus import get_assets_root_path
+# from omni.isaac.core.utils.nucleus import get_assets_root_path
 
-assets_root_path = get_assets_root_path()
+# assets_root_path = get_assets_root_path()
 
-ASSET_USD_PATH = assets_root_path + "/Isaac/Robots/Unitree/go1.usd"
-SOURCE_PRIM_PATH = "/go1_description"
-SAVE_AS_PATH = assets_root_path + "/Isaac/Robots/Unitree/go1_instanceable.usd"
+# ASSET_USD_PATH = assets_root_path + "/Isaac/Robots/Unitree/go1.usd"
+# SOURCE_PRIM_PATH = "/go1_description"
+# SAVE_AS_PATH = assets_root_path + "/Isaac/Robots/Unitree/go1_instanceable.usd"
 
-convert_asset_instanceable(
-    asset_usd_path=ASSET_USD_PATH, 
-    source_prim_path=SOURCE_PRIM_PATH, 
-    save_as_path=SAVE_AS_PATH,
-    create_xforms=True
-)
+# convert_asset_instanceable(
+#     asset_usd_path=ASSET_USD_PATH, 
+#     source_prim_path=SOURCE_PRIM_PATH, 
+#     save_as_path=SAVE_AS_PATH,
+#     create_xforms=True
+# )
