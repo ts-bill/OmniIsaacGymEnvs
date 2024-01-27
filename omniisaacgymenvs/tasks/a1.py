@@ -92,7 +92,12 @@ class A1Task(RLTask):
     def get_a1(self):
         a1 = A1(prim_path=self.default_zero_env_path + "/a1_instanceable_meshes", #prim_path name
                     name="A1",
-                    usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/test6.usd", #file name
+                    #usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/urdf/a1.usd", #file name
+                    usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/test5.usd", #file name
+                    #test 7 = unlimit joint + test6
+                    #test 6 = test 5
+                    #test 5 = no base prim path + no thigh_shoulder prim path
+                    #a1_instanceble_meshes = original with instaceble code
                     translation=self._a1_translation)
         self._sim_config.apply_articulation_settings(
             "A1", 
@@ -150,7 +155,7 @@ class A1Task(RLTask):
             dim=-1,
         )
         self.obs_buf[:] = obs
-
+        #print(obs)
         observations = {
             self._a1s.name: {
                 "obs_buf": self.obs_buf

@@ -177,7 +177,7 @@ class AnymalTerrainTask(RLTask):
         )  # 10-50cm on each side
         x = 0.1 * torch.tensor(
             [-8, -7, -6, -5, -4, -3, -2, 2, 3, 4, 5, 6, 7, 8], device=self.device, requires_grad=False
-        )  # 20-80cm on each side
+        )  # 20-80 each sidecm on
         grid_x, grid_y = torch.meshgrid(x, y, indexing='ij')
 
         self.num_height_points = grid_x.numel()
@@ -387,7 +387,7 @@ class AnymalTerrainTask(RLTask):
         self.base_pos, self.base_quat = self._anymals.get_world_poses(clone=False)
         self.base_velocities = self._anymals.get_velocities(clone=False)
         self.knee_pos, self.knee_quat = self._anymals._knees.get_world_poses(clone=False)
-        print("debug1=================",self.base_velocities)
+        #print("debug1=================",self.base_velocities)
     def pre_physics_step(self, actions):
         if not self.world.is_playing():
             return
@@ -481,6 +481,7 @@ class AnymalTerrainTask(RLTask):
         rew_orient = torch.sum(torch.square(self.projected_gravity[:, :2]), dim=1) * self.rew_scales["orient"]
 
         # base height penalty
+        print(self.base_pos[:, 2])
         rew_base_height = torch.square(self.base_pos[:, 2] - 0.52) * self.rew_scales["base_height"]
 
         # torque penalty

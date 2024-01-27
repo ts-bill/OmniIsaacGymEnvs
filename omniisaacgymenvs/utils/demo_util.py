@@ -29,10 +29,11 @@
 
 def initialize_demo(config, env, init_sim=True):
     from omniisaacgymenvs.demos.anymal_terrain import AnymalTerrainDemo
-    
+    from omniisaacgymenvs.demos.a1_terrain import A1TerrainDemo
     # Mappings from strings to environments
     task_map = {
         "AnymalTerrain": AnymalTerrainDemo,
+        "A1Terrain": A1TerrainDemo,
     }
 
     from omniisaacgymenvs.utils.config_utils.sim_config import SimConfig

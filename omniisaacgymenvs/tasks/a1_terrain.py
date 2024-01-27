@@ -88,6 +88,7 @@ class A1TerrainTask(RLTask):
         self._task_cfg = sim_config.task_config
 
         # normalization
+        # ตัวคูณของตัวแปรต่างๆ
         self.lin_vel_scale = self._task_cfg["env"]["learn"]["linearVelocityScale"]
         self.ang_vel_scale = self._task_cfg["env"]["learn"]["angularVelocityScale"]
         self.dof_pos_scale = self._task_cfg["env"]["learn"]["dofPositionScale"]
@@ -96,6 +97,7 @@ class A1TerrainTask(RLTask):
         self.action_scale = self._task_cfg["env"]["control"]["actionScale"]
 
         # reward scales
+        # ตัวคูณของ reward
         self.rew_scales = {}
         self.rew_scales["termination"] = self._task_cfg["env"]["learn"]["terminalReward"]
         self.rew_scales["lin_vel_xy"] = self._task_cfg["env"]["learn"]["linearVelocityXYRewardScale"]
@@ -111,18 +113,22 @@ class A1TerrainTask(RLTask):
         self.rew_scales["fallen_over"] = self._task_cfg["env"]["learn"]["fallenOverRewardScale"]
 
         # command ranges
+        # ความเร็วที่ใช้สุ่มในตอน trainning
         self.command_x_range = self._task_cfg["env"]["randomCommandVelocityRanges"]["linear_x"]
         self.command_y_range = self._task_cfg["env"]["randomCommandVelocityRanges"]["linear_y"]
         self.command_yaw_range = self._task_cfg["env"]["randomCommandVelocityRanges"]["yaw"]
 
         # base init state
+        # ตำแหน่งเริ่มต้น
         pos = self._task_cfg["env"]["baseInitState"]["pos"]
         rot = self._task_cfg["env"]["baseInitState"]["rot"]
         v_lin = self._task_cfg["env"]["baseInitState"]["vLinear"]
         v_ang = self._task_cfg["env"]["baseInitState"]["vAngular"]
+        #นำ List มาต่่อกันจะรวมเป็น 13 element
         self.base_init_state = pos + rot + v_lin + v_ang
-
+        #print("debug-----------------------------------------",self.base_init_state,len(self.base_init_state))
         # default joint positions
+        #ข้อมูลเป็น dict
         self.named_default_joint_angles = self._task_cfg["env"]["defaultJointAngles"]
 
         # other
@@ -267,6 +273,7 @@ class A1TerrainTask(RLTask):
             name = self.dof_names[i]
             angle = self.named_default_joint_angles[name]
             self.default_dof_pos[:, i] = angle
+            print("d")
 
     def post_reset(self):
         self.base_init_state = torch.tensor(

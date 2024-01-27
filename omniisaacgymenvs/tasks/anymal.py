@@ -172,7 +172,7 @@ class AnymalTask(RLTask):
             dim=-1,
         )
         self.obs_buf[:] = obs
-
+        #print(obs)
         observations = {self._anymals.name: {"obs_buf": self.obs_buf}}
         return observations
 
