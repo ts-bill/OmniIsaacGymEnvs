@@ -13,7 +13,7 @@ env:
   controlFrequencyInv: 2
 
   baseInitState:
-    pos: [0.0, 0.0, 0.40] # x,y,z [m]
+    pos: [0.0, 0.0, 0.42] # x,y,z [m]
     rot: [0.0, 0.0, 0.0, 1.0] # x,y,z,w [quat]
     vLinear: [0.0, 0.0, 0.0]  # x,y,z [m/s]
     vAngular: [0.0, 0.0, 0.0]  # x,y,z [rad/s]
@@ -25,8 +25,8 @@ env:
 
   control:
     # PD Drive parameters:
-    stiffness: 20.0 #85.0  # [N*m/rad]
-    damping: 0.5 #2.0     # [N*m*s/rad]
+    stiffness: 85.0 #85.0  # [N*m/rad]
+    damping: 2.0 #2.0     # [N*m*s/rad]
     # action scale: target angle = actionScale * action + defaultAngle
     actionScale: 13.5
     #actionScale: 0.5 #0.25

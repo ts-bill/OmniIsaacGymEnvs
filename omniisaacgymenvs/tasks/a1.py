@@ -93,10 +93,13 @@ class A1Task(RLTask):
         a1 = A1(prim_path=self.default_zero_env_path + "/a1_instanceable_meshes", #prim_path name
                     name="A1",
                     #usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/urdf/a1.usd", #file name
-                    usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/test5.usd", #file name
+                    usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/test4.usd", #file name
+                    #test 8 = test 5 delete drive in each joint
                     #test 7 = unlimit joint + test6
                     #test 6 = test 5
-                    #test 5 = no base prim path + no thigh_shoulder prim path
+                    #test 5 = a1_instanceable_meshes + no base prim path + no thigh_shoulder prim path
+                    #test 4 = a1_instanceable_meshes + no thigh_shoulder prim path
+                    #test 5 = a1_instanceable_meshes + no base prim path
                     #a1_instanceble_meshes = original with instaceble code
                     translation=self._a1_translation)
         self._sim_config.apply_articulation_settings(
@@ -113,7 +116,7 @@ class A1Task(RLTask):
             joint_paths.append(f"trunk/{quadrant}_hip_joint")
 
         for joint_path in joint_paths:
-            set_drive(f"{a1.prim_path}/{joint_path}", "angular", "position", 0, 400, 40, 1000)
+            set_drive(f"{a1.prim_path}/{joint_path}", "angular", "position", 0, 400, 40, 1000) # target Position, Stiffness, Damping, Max Force
 
         self.default_dof_pos = torch.zeros((self.num_envs, 12), dtype=torch.float, device=self.device, requires_grad=False)
         dof_names = a1.dof_names

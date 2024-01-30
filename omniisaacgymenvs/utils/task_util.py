@@ -56,6 +56,8 @@ def import_tasks():
     from omniisaacgymenvs.tasks.go1 import Go1Task
     from omniisaacgymenvs.tasks.go1_terrain import Go1TerrainTask
 
+    from omniisaacgymenvs.tasks.test import TestTerrainTask
+
     # Mappings from strings to environments
     task_map = {
         "AllegroHand": AllegroHandTask,
@@ -80,7 +82,8 @@ def import_tasks():
         "A1": A1Task,
         "A1Terrain": A1TerrainTask,
         "Go1": Go1Task,
-        "Go1Terrain": Go1TerrainTask
+        "Go1Terrain": Go1TerrainTask,
+        "Test" : TestTerrainTask
     }
 
     task_map_warp = {

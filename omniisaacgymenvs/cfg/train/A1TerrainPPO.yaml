@@ -64,7 +64,7 @@ params:
     grad_norm: 1.
     horizon_length: 48 #24 #number of steps in each ep that algorithm uses for trainning
     #minibatch_size: 32768
-    minibatch_size: 24000
+    minibatch_size: 480 #24000
     mini_epochs: 5
     critic_coef: 2
     clip_value: True

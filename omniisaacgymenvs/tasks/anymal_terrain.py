@@ -463,6 +463,7 @@ class AnymalTerrainTask(RLTask):
         self.has_fallen = (torch.norm(self._anymals._base.get_net_contact_forces(clone=False), dim=1) > 1.0) | (
             torch.sum(knee_contact, dim=-1) > 1.0
         )
+        print("debug3=================",torch.count_nonzero(self.has_fallen,dim=0))
         self.reset_buf = self.has_fallen.clone()
         self.reset_buf = torch.where(self.timeout_buf.bool(), torch.ones_like(self.reset_buf), self.reset_buf)
 
@@ -481,7 +482,7 @@ class AnymalTerrainTask(RLTask):
         rew_orient = torch.sum(torch.square(self.projected_gravity[:, :2]), dim=1) * self.rew_scales["orient"]
 
         # base height penalty
-        print(self.base_pos[:, 2])
+        #print(self.base_pos[:, 2])
         rew_base_height = torch.square(self.base_pos[:, 2] - 0.52) * self.rew_scales["base_height"]
 
         # torque penalty

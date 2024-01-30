@@ -251,12 +251,13 @@ class A1TerrainTask(RLTask):
         self.terrain_origins = torch.from_numpy(self.terrain.env_origins).to(self.device).to(torch.float)
 
     def get_a1(self):
-        a1_translation = torch.tensor([0.0, 0.0, 0.2])
+        a1_translation = torch.tensor([0.0, 0.0, 0.42])
         a1_orientation = torch.tensor([1.0, 0.0, 0.0, 0.0])
         a1 = A1(
             prim_path=self.default_zero_env_path + "/a1_instanceable_meshes",
             name="A1",
-            usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/test5.usd", #file name
+            #usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/Robots_for_Omniverse/openUSD_assets/UnitreeRobotics/a1/instanceable_meshes.usd",
+            usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/test4.usd", #file name
             translation=a1_translation,
             orientation=a1_orientation,
         )
@@ -273,7 +274,7 @@ class A1TerrainTask(RLTask):
             name = self.dof_names[i]
             angle = self.named_default_joint_angles[name]
             self.default_dof_pos[:, i] = angle
-            print("d")
+
 
     def post_reset(self):
         self.base_init_state = torch.tensor(
@@ -402,7 +403,7 @@ class A1TerrainTask(RLTask):
         self.base_pos, self.base_quat = self._a1s.get_world_poses(clone=False)
         self.base_velocities = self._a1s.get_velocities(clone=False)
         self.knee_pos, self.knee_quat = self._a1s._knees.get_world_poses(clone=False)
-        #print("debug1=================",self.base_velocities)
+        #print("debug1=================",self.knee_pos)
 
     def pre_physics_step(self, actions):
         if not self.world.is_playing():
@@ -414,8 +415,8 @@ class A1TerrainTask(RLTask):
                 torques = torch.clip(
                     self.Kp * (self.action_scale * self.actions + self.default_dof_pos - self.dof_pos)
                     - self.Kd * self.dof_vel,
-                    -80.0,
-                    80.0,
+                    -20.0, #Change
+                    20.0, #Change
                 )
                 self._a1s.set_joint_efforts(torques)
                 self.torques = torques
@@ -472,13 +473,16 @@ class A1TerrainTask(RLTask):
             torch.ones_like(self.timeout_buf),
             torch.zeros_like(self.timeout_buf),
         )
+        
         knee_contact = (
             torch.norm(self._a1s._knees.get_net_contact_forces(clone=False).view(self._num_envs, 4, 3), dim=-1)
             > 1.0
         )
+        
         self.has_fallen = (torch.norm(self._a1s._base.get_net_contact_forces(clone=False), dim=1) > 1.0) | (
             torch.sum(knee_contact, dim=-1) > 1.0
         )
+        #print("debug3=================",torch.count_nonzero(self.has_fallen,dim=0))
         self.reset_buf = self.has_fallen.clone()
         self.reset_buf = torch.where(self.timeout_buf.bool(), torch.ones_like(self.reset_buf), self.reset_buf)
 
