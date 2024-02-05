@@ -32,16 +32,16 @@ env:
 
   randomCommandVelocityRanges:
     # train
-    linear_x: [-1., 1.] # min max [m/s]
-    linear_y: [-1., 1.]   # min max [m/s]
-    yaw: [-3.14, 3.14]    # min max [rad/s]
+    linear_x: [-1.0, 1.0] # min max [m/s]
+    linear_y: [-1.0, 1.0]   # min max [m/s]
+    yaw: [-1.0, 1.0]    # min max [rad/s]
 
   control:
     # PD Drive parameters:
-    stiffness: 90.0 #80.0 #80.0  # [N*m/rad]
-    damping: 2.0 #2.0     # [N*m*s/rad]
+    stiffness: 20.0 #400.0 #80.0 #80.0 #80.0  # [N*m/rad]
+    damping: 0.5 #2.0 #40.0 #2.0 #2.0     # [N*m*s/rad]
     # action scale: target angle = actionScale * action + defaultAngle
-    actionScale: 0.5 #0.5
+    actionScale: 0.25 #0.5
     # decimation: Number of control action updates @ sim DT per policy DT
     decimation: 4
 
@@ -61,6 +61,21 @@ env:
     FR_calf_joint: -1.5    # [rad]
     RR_calf_joint: -1.5     # [rad]
 
+    # LF_HAA: 0.1    # [rad]
+    # LH_HAA: 0.1    # [rad]
+    # RF_HAA: -0.1   # [rad]
+    # RH_HAA: -0.1   # [rad]
+
+    # LF_HFE: 0.8     # [rad]
+    # LH_HFE: 1.0    # [rad]
+    # RF_HFE: 0.8     # [rad]
+    # RH_HFE: 1.0    # [rad]
+
+    # LF_KFE: -1.5    # [rad]
+    # LH_KFE: -1.5     # [rad]
+    # RF_KFE: -1.5    # [rad]
+    # RH_KFE: -1.5     # [rad]
+
   learn:
     # rewards
     terminalReward: 0.0
@@ -69,7 +84,7 @@ env:
     angularVelocityXYRewardScale: -0.05
     angularVelocityZRewardScale: 0.5
     orientationRewardScale: -0.
-    torqueRewardScale: -0.00002 
+    torqueRewardScale: -0.0002 #-0.00002 
     jointAccRewardScale: -0.0005
     baseHeightRewardScale: -0.0
     actionRateRewardScale: -0.01
@@ -103,6 +118,7 @@ env:
 
 sim:
   dt: 0.005
+  #dt: 0.01
   use_gpu_pipeline: ${eq:${...pipeline},"gpu"}
   gravity: [0.0, 0.0, -9.81]
   add_ground_plane: False

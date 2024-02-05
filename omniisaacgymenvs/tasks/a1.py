@@ -94,7 +94,9 @@ class A1Task(RLTask):
                     name="A1",
                     #usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/urdf/a1.usd", #file name
                     #usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/test4.usd", #file name
-                    usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/Robots_for_Omniverse/openUSD_assets/UnitreeRobotics/a1/a1.usd",
+                    #usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/new/a1.usd",
+                    #usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/urdf/a1/a1.usd",
+                    usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/omniverse_a1/a1_instanceable_meshes.usd",
                     #test 8 = test 5 delete drive in each joint
                     #test 7 = unlimit joint + test6
                     #test 6 = test 5
@@ -109,24 +111,25 @@ class A1Task(RLTask):
             self._sim_config.parse_actor_config("A1")
             )
 
-        # Configure joint properties
-        # joint_paths = []
-        # for quadrant in ["FL", "RL", "FR", "RR"]:
-        #     for parent, joint in [("hip", "thigh"), ("thigh", "calf")]:
-        #         joint_paths.append(f"{quadrant}_{parent}/{quadrant}_{joint}_joint")
-        #     joint_paths.append(f"trunk/{quadrant}_hip_joint")
-
-        # for joint_path in joint_paths:
-        #     set_drive(f"{a1.prim_path}/{joint_path}", "angular", "position", 0, 400, 40, 1000) # target Position, Stiffness, Damping, Max Force
+        #Configure joint properties
 
         joint_paths = []
-        for quadrant in ["LF", "LH", "RF", "RH"]:
-            for component, abbrev in [("HIP", "H"), ("THIGH", "K")]:
-                joint_paths.append(f"{quadrant}_{component}/{quadrant}_{abbrev}FE")
-            joint_paths.append(f"base/{quadrant}_HAA")
-        
+        for quadrant in ["FL", "RL", "FR", "RR"]:
+            for parent, joint in [("hip", "thigh"), ("thigh", "calf")]:
+                joint_paths.append(f"{quadrant}_{parent}/{quadrant}_{joint}_joint")
+            joint_paths.append(f"base/{quadrant}_hip_joint")
+
         for joint_path in joint_paths:
-            set_drive(f"{a1.prim_path}/{joint_path}", "angular", "position", 0, 400, 40, 1000)
+            set_drive(f"{a1.prim_path}/{joint_path}", "angular", "position", 0, 400, 40, 33.5) # target Position, Stiffness, Damping, Max Force
+
+        # joint_paths = []
+        # for quadrant in ["LF", "LH", "RF", "RH"]:
+        #     for component, abbrev in [("HIP", "H"), ("THIGH", "K")]:
+        #         joint_paths.append(f"{quadrant}_{component}/{quadrant}_{abbrev}FE")
+        #     joint_paths.append(f"base/{quadrant}_HAA")
+        
+        # for joint_path in joint_paths:
+        #     set_drive(f"{a1.prim_path}/{joint_path}", "angular", "position", 0, 400, 40, 33.5)
 
 
         self.default_dof_pos = torch.zeros((self.num_envs, 12), dtype=torch.float, device=self.device, requires_grad=False)

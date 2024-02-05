@@ -76,7 +76,22 @@ class A1(Robot):
                            "FL_calf_joint",
                            "RL_calf_joint",
                            "FR_calf_joint",
-                           "RR_calf_joint"]
+                           "RR_calf_joint"
+            ]
+        # self._dof_names = [
+        #     "LF_HAA",
+        #     "LH_HAA",
+        #     "RF_HAA",
+        #     "RH_HAA",
+        #     "LF_HFE",
+        #     "LH_HFE",
+        #     "RF_HFE",
+        #     "RH_HFE",
+        #     "LF_KFE",
+        #     "LH_KFE",
+        #     "RF_KFE",
+        #     "RH_KFE",
+        # ]
 
     @property
     def dof_names(self):
@@ -85,6 +100,7 @@ class A1(Robot):
     def set_a1_properties(self, stage, prim):
         for link_prim in prim.GetChildren():
             if link_prim.HasAPI(PhysxSchema.PhysxRigidBodyAPI): 
+                #print("Debug=========",link_prim)
                 rb = PhysxSchema.PhysxRigidBodyAPI.Get(stage, link_prim.GetPrimPath())
                 rb.GetDisableGravityAttr().Set(False)
                 rb.GetRetainAccelerationsAttr().Set(False)
@@ -97,6 +113,7 @@ class A1(Robot):
     def prepare_contacts(self, stage, prim):
         for link_prim in prim.GetChildren():
             if link_prim.HasAPI(PhysxSchema.PhysxRigidBodyAPI): 
+                #if "_HIP" not in str(link_prim.GetPrimPath()):
                 if "_hip" not in str(link_prim.GetPrimPath()):
                     #print("Debug=========",link_prim)
                     rb = PhysxSchema.PhysxRigidBodyAPI.Get(stage, link_prim.GetPrimPath())

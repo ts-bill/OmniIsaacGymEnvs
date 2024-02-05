@@ -256,8 +256,11 @@ class A1TerrainTask(RLTask):
         a1 = A1(
             prim_path=self.default_zero_env_path + "/a1_instanceable_meshes",
             name="A1",
-            #usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/Robots_for_Omniverse/openUSD_assets/UnitreeRobotics/a1/instanceable_meshes.usd",
-            usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/test4.usd", #file name
+            usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/omniverse_a1/a1_instanceable_meshes.usd",
+            #usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/new/a1.usd",
+            #usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/Robots_for_Omniverse/openUSD_assets/UnitreeRobotics/a1/a1.usd",
+            #usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/test4.usd", #file name
+            #usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/urdf/a1/a1.usd",
             translation=a1_translation,
             orientation=a1_orientation,
         )
@@ -415,8 +418,8 @@ class A1TerrainTask(RLTask):
                 torques = torch.clip(
                     self.Kp * (self.action_scale * self.actions + self.default_dof_pos - self.dof_pos)
                     - self.Kd * self.dof_vel,
-                    -20.0, #Change
-                    20.0, #Change
+                    -55.0, #Change
+                    55.0, #Change
                 )
                 self._a1s.set_joint_efforts(torques)
                 self.torques = torques
@@ -433,7 +436,7 @@ class A1TerrainTask(RLTask):
 
             self.common_step_counter += 1
             if self.common_step_counter % self.push_interval == 0:
-                self.push_robots()
+               self.push_robots()
 
             # prepare quantities
             #print("debug2222=================",self.base_quat,self.base_velocities)
@@ -500,7 +503,7 @@ class A1TerrainTask(RLTask):
         # orientation penalty
         rew_orient = torch.sum(torch.square(self.projected_gravity[:, :2]), dim=1) * self.rew_scales["orient"]
 
-        # base height penalty
+        # base height penalty #0.25
         rew_base_height = torch.square(self.base_pos[:, 2] - 0.25) * self.rew_scales["base_height"] # Anymal 0.52
 
         # torque penalty

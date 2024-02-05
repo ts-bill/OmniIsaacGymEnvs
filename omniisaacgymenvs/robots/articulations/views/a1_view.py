@@ -48,8 +48,8 @@ class A1View(ArticulationView):
             reset_xform_properties=False
         )
         self._knees = RigidPrimView(
-            #prim_paths_expr="/World/envs/.*/a1_instanceable_meshes/.*_thigh",
-            prim_paths_expr="/World/envs/.*/a1_instanceable_meshes/.*_THIGH",
+            prim_paths_expr="/World/envs/.*/a1_instanceable_meshes/.*_thigh",
+            #prim_paths_expr="/World/envs/.*/a1_instanceable_meshes/.*_THIGH",
             name="knees_view", 
             reset_xform_properties=False, 
             track_contact_forces=track_contact_forces, 
