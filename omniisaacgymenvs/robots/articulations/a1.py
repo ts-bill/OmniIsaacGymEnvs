@@ -99,23 +99,24 @@ class A1(Robot):
 
     def set_a1_properties(self, stage, prim):
         for link_prim in prim.GetChildren():
-            if link_prim.HasAPI(PhysxSchema.PhysxRigidBodyAPI): 
-                #print("Debug=========",link_prim)
-                rb = PhysxSchema.PhysxRigidBodyAPI.Get(stage, link_prim.GetPrimPath())
-                rb.GetDisableGravityAttr().Set(False)
-                rb.GetRetainAccelerationsAttr().Set(False)
-                rb.GetLinearDampingAttr().Set(0.0)
-                rb.GetMaxLinearVelocityAttr().Set(1000.0)
-                rb.GetAngularDampingAttr().Set(0.0)
-                rb.GetMaxAngularVelocityAttr().Set(64/np.pi*180)
-                #rb.GetMaxAngularVelocityAttr().Set(1000.0)
+            if link_prim.HasAPI(PhysxSchema.PhysxRigidBodyAPI):
+                if "_shoulder" not in str(link_prim.GetPrimPath()):
+                    #print("Debug=========",link_prim)
+                    rb = PhysxSchema.PhysxRigidBodyAPI.Get(stage, link_prim.GetPrimPath())
+                    rb.GetDisableGravityAttr().Set(False)
+                    rb.GetRetainAccelerationsAttr().Set(False)
+                    rb.GetLinearDampingAttr().Set(0.0)
+                    rb.GetMaxLinearVelocityAttr().Set(1000.0)
+                    rb.GetAngularDampingAttr().Set(0.0)
+                    rb.GetMaxAngularVelocityAttr().Set(64/np.pi*180)
+                    #rb.GetMaxAngularVelocityAttr().Set(1000.0)
 
     def prepare_contacts(self, stage, prim):
         for link_prim in prim.GetChildren():
             if link_prim.HasAPI(PhysxSchema.PhysxRigidBodyAPI): 
                 #if "_HIP" not in str(link_prim.GetPrimPath()):
-                if "_hip" not in str(link_prim.GetPrimPath()):
-                    #print("Debug=========",link_prim)
+                if ("_hip" not in str(link_prim.GetPrimPath())) and ("_shoulder" not in str(link_prim.GetPrimPath())) :
+                    #print("Debug=========",str(link_prim.GetPrimPath()))
                     rb = PhysxSchema.PhysxRigidBodyAPI.Get(stage, link_prim.GetPrimPath())
                     rb.CreateSleepThresholdAttr().Set(0)
                     cr_api = PhysxSchema.PhysxContactReportAPI.Apply(link_prim)

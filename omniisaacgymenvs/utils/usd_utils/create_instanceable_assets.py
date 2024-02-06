@@ -110,7 +110,7 @@ def convert_asset_instanceable(asset_usd_path, source_prim_path, save_as_path=No
     while len(prims) > 0:
         prim = prims.pop(0)
         if prim:
-            if prim.GetTypeName() in ["Mesh", "Capsule", "Sphere", "Box"]:
+            if prim.GetTypeName() in ["Mesh", "Capsule", "Sphere", "Box", "Cylinder", "Cube"]:
                 parent_prim = prim.GetParent()
                 if parent_prim and not parent_prim.IsInstance():
                     parent_prim.GetReferences().AddReference(

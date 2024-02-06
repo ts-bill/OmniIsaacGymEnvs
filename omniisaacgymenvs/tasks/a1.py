@@ -96,7 +96,7 @@ class A1Task(RLTask):
                     #usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/test4.usd", #file name
                     #usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/new/a1.usd",
                     #usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/urdf/a1/a1.usd",
-                    usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/omniverse_a1/a1_instanceable_meshes.usd",
+                    usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/omniverse_a1/a1_instanceable.usd",
                     #test 8 = test 5 delete drive in each joint
                     #test 7 = unlimit joint + test6
                     #test 6 = test 5

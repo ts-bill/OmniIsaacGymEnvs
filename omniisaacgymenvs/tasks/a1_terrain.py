@@ -256,7 +256,7 @@ class A1TerrainTask(RLTask):
         a1 = A1(
             prim_path=self.default_zero_env_path + "/a1_instanceable_meshes",
             name="A1",
-            usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/omniverse_a1/a1_instanceable_meshes.usd",
+            usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/omniverse_a1/a1_instanceable.usd",
             #usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/new/a1.usd",
             #usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/Robots_for_Omniverse/openUSD_assets/UnitreeRobotics/a1/a1.usd",
             #usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/test4.usd", #file name
@@ -273,6 +273,7 @@ class A1TerrainTask(RLTask):
         a1.prepare_contacts(self._stage, a1.prim)
 
         self.dof_names = a1.dof_names
+        # print("Debug==========================================", self.dof_names)
         for i in range(self.num_actions):
             name = self.dof_names[i]
             angle = self.named_default_joint_angles[name]
