@@ -401,6 +401,7 @@ class AnymalTerrainTask(RLTask):
                     -80.0,
                     80.0,
                 )
+                #print("Debug==========================================",self.dof_vel[0])
                 self._anymals.set_joint_efforts(torques)
                 self.torques = torques
                 SimulationContext.step(self.world, render=False)
@@ -419,7 +420,7 @@ class AnymalTerrainTask(RLTask):
                 self.push_robots()
 
             # prepare quantities
-            #print("Exampledebug2222=================",self.base_quat,self.base_velocities)
+            print("Exampledebug2222=================",self.base_quat,self.base_velocities)
             self.base_lin_vel = quat_rotate_inverse(self.base_quat, self.base_velocities[:, 0:3])
             self.base_ang_vel = quat_rotate_inverse(self.base_quat, self.base_velocities[:, 3:6])
             self.projected_gravity = quat_rotate_inverse(self.base_quat, self.gravity_vec)
@@ -463,7 +464,7 @@ class AnymalTerrainTask(RLTask):
         self.has_fallen = (torch.norm(self._anymals._base.get_net_contact_forces(clone=False), dim=1) > 1.0) | (
             torch.sum(knee_contact, dim=-1) > 1.0
         )
-        print("debug3=================",torch.count_nonzero(self.has_fallen,dim=0))
+        #print("debug3=================",torch.count_nonzero(self.has_fallen,dim=0))
         self.reset_buf = self.has_fallen.clone()
         self.reset_buf = torch.where(self.timeout_buf.bool(), torch.ones_like(self.reset_buf), self.reset_buf)
 

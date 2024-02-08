@@ -273,7 +273,7 @@ class A1TerrainTask(RLTask):
         a1.prepare_contacts(self._stage, a1.prim)
 
         self.dof_names = a1.dof_names
-        # print("Debug==========================================", self.dof_names)
+        #print("Debug==========================================", self.dof_names)
         for i in range(self.num_actions):
             name = self.dof_names[i]
             angle = self.named_default_joint_angles[name]
@@ -419,9 +419,10 @@ class A1TerrainTask(RLTask):
                 torques = torch.clip(
                     self.Kp * (self.action_scale * self.actions + self.default_dof_pos - self.dof_pos)
                     - self.Kd * self.dof_vel,
-                    -55.0, #Change
-                    55.0, #Change
+                    torch.tensor([-20.0, -20.0, -20.0, -20.0, -55.0, -55.0, -55.0, -55.0, -55.0, -55.0, -55.0, -55.0], dtype=torch.float, device=self.device), #Change
+                    torch.tensor([20.0, 20.0, 20.0, 20.0, 55.0, 55.0, 55.0, 55.0, 55.0, 55.0, 55.0, 55.0], dtype=torch.float, device=self.device), #Change
                 )
+                #print("Debug==========================================",self.torques[0])
                 self._a1s.set_joint_efforts(torques)
                 self.torques = torques
                 SimulationContext.step(self.world, render=False)
@@ -440,10 +441,11 @@ class A1TerrainTask(RLTask):
                self.push_robots()
 
             # prepare quantities
-            #print("debug2222=================",self.base_quat,self.base_velocities)
+            #print("debug2222=================",self.base_quat[0],self.base_velocities[0])
             self.base_lin_vel = quat_rotate_inverse(self.base_quat, self.base_velocities[:, 0:3])
             self.base_ang_vel = quat_rotate_inverse(self.base_quat, self.base_velocities[:, 3:6])
             self.projected_gravity = quat_rotate_inverse(self.base_quat, self.gravity_vec)
+            #print("debug3=================",self.base_lin_vel)           
             forward = quat_apply(self.base_quat, self.forward_vec)
             heading = torch.atan2(forward[:, 1], forward[:, 0])
             self.commands[:, 2] = torch.clip(0.5 * wrap_to_pi(self.commands[:, 3] - heading), -1.0, 1.0)

@@ -64,12 +64,12 @@ params:
     grad_norm: 1.
     horizon_length: 48 #24 #number of steps in each ep that algorithm uses for trainning
     #minibatch_size: 32768
-    minibatch_size: 48000 #24000 #480 #24000
+    minibatch_size: 96000 #48000 #24000 #480 #24000
     mini_epochs: 5
     critic_coef: 2
     clip_value: True
     seq_length: 4 # only for rnn
-    bounds_loss_coef: 0. #0.001
+    bounds_loss_coef: 0.001 #0.001
 
     max_epochs: ${resolve_default:100000,${....max_iterations}}
     save_best_after: 200
