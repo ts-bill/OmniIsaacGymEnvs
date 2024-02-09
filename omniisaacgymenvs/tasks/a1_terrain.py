@@ -419,8 +419,8 @@ class A1TerrainTask(RLTask):
                 torques = torch.clip(
                     self.Kp * (self.action_scale * self.actions + self.default_dof_pos - self.dof_pos)
                     - self.Kd * self.dof_vel,
-                    torch.tensor([-20.0, -20.0, -20.0, -20.0, -55.0, -55.0, -55.0, -55.0, -55.0, -55.0, -55.0, -55.0], dtype=torch.float, device=self.device), #Change
-                    torch.tensor([20.0, 20.0, 20.0, 20.0, 55.0, 55.0, 55.0, 55.0, 55.0, 55.0, 55.0, 55.0], dtype=torch.float, device=self.device), #Change
+                    -33.5, #torch.tensor([-20.0, -20.0, -20.0, -20.0, -55.0, -55.0, -55.0, -55.0, -55.0, -55.0, -55.0, -55.0], dtype=torch.float, device=self.device), #Change
+                    33.5, #torch.tensor([20.0, 20.0, 20.0, 20.0, 55.0, 55.0, 55.0, 55.0, 55.0, 55.0, 55.0, 55.0], dtype=torch.float, device=self.device), #Change
                 )
                 #print("Debug==========================================",self.torques[0])
                 self._a1s.set_joint_efforts(torques)
@@ -488,7 +488,7 @@ class A1TerrainTask(RLTask):
         self.has_fallen = (torch.norm(self._a1s._base.get_net_contact_forces(clone=False), dim=1) > 1.0) | (
             torch.sum(knee_contact, dim=-1) > 1.0
         )
-        #print("debug3=================",torch.count_nonzero(self.has_fallen,dim=0))
+        print("debug3=================",torch.count_nonzero(knee_contact,dim=0))
         self.reset_buf = self.has_fallen.clone()
         self.reset_buf = torch.where(self.timeout_buf.bool(), torch.ones_like(self.reset_buf), self.reset_buf)
 
@@ -528,19 +528,24 @@ class A1TerrainTask(RLTask):
             torch.sum(torch.abs(self.dof_pos[:, 0:4] - self.default_dof_pos[:, 0:4]), dim=1) * self.rew_scales["hip"]
         )
 
+        rew_stand_still = (
+            torch.sum(torch.abs(self.dof_pos - self.default_dof_pos), dim=1) * (torch.norm(self.commands[:, :2], dim=1) < 0.1)
+        )
+
         # total reward
         self.rew_buf = (
-            rew_lin_vel_xy
-            + rew_ang_vel_z
-            + rew_lin_vel_z
-            + rew_ang_vel_xy
-            + rew_orient
-            + rew_base_height
-            + rew_torque
-            + rew_joint_acc
-            + rew_action_rate
-            + rew_hip
+            rew_lin_vel_xy # +
+            + rew_ang_vel_z # +
+            + rew_lin_vel_z # -
+            + rew_ang_vel_xy # -
+            + rew_orient # 0
+            + rew_base_height # 0
+            + rew_torque # -
+            + rew_joint_acc # -
+            + rew_action_rate # -
+            + rew_hip # 0
             + rew_fallen_over
+            #+ rew_stand_still
         )
         self.rew_buf = torch.clip(self.rew_buf, min=0.0, max=None)
 

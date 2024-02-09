@@ -27,7 +27,7 @@ env:
   baseInitState:
     pos: [0.0, 0.0, 0.42] # x,y,z [m]
     rot: [1.0, 0.0, 0.0, 0.0] # w,x,y,z [quat]
-    vLinear: [0.0, 0.0, 0.0]  # x,y,z [m/s]
+    vLinear: [0.0, 0.0, 0.0]  # x,base_heighty,z [m/s]
     vAngular: [0.0, 0.0, 0.0]  # x,y,z [rad/s]
 
   randomCommandVelocityRanges:
@@ -79,13 +79,13 @@ env:
   learn:
     # rewards
     terminalReward: 0.0
-    linearVelocityXYRewardScale: 2.0
+    linearVelocityXYRewardScale: 1.5 # ori=1.0
     linearVelocityZRewardScale: -4.0
     angularVelocityXYRewardScale: -0.05
     angularVelocityZRewardScale: 0.5
     orientationRewardScale: -0.
     torqueRewardScale: -0.00002 #-0.00002 
-    jointAccRewardScale: -0.0005
+    jointAccRewardScale: -0.0005 #-0.00000025 #ori = -0.0005 #-0.00000025
     baseHeightRewardScale: -0.0
     actionRateRewardScale: -0.01
     fallenOverRewardScale: -1.0

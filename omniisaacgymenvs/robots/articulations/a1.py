@@ -108,7 +108,8 @@ class A1(Robot):
                 rb.GetMaxLinearVelocityAttr().Set(1000.0)
                 rb.GetAngularDampingAttr().Set(0.05)
                 #rb.GetMaxAngularVelocityAttr().Set(64/np.pi*180)
-                rb.GetMaxAngularVelocityAttr().Set(5729.58008)
+                #rb.GetMaxAngularVelocityAttr().Set(5729.58008)
+                rb.GetMaxAngularVelocityAttr().Set(1203.21137)
 
     def prepare_contacts(self, stage, prim):
         for link_prim in prim.GetChildren():
