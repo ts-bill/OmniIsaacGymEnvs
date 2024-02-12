@@ -71,7 +71,7 @@ params:
     grad_norm: 1.
     horizon_length: 48
     #minibatch_size: 16384
-    minibatch_size: 24000
+    minibatch_size: 72000
     mini_epochs: 5
     critic_coef: 2
     clip_value: True

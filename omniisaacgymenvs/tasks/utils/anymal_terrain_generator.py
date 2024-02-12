@@ -127,7 +127,7 @@ class Terrain:
                 choice = j / num_terrains
 
                 slope = difficulty * 0.4
-                step_height = 0.05 + 0.175 * difficulty
+                step_height = 0.05 + 0.175 * difficulty #0.05 + 0.175 * difficulty 
                 discrete_obstacles_height = 0.025 + difficulty * 0.15
                 stepping_stones_size = 2 - 1.8 * difficulty
                 if choice < self.proportions[0]:
@@ -144,8 +144,14 @@ class Terrain:
                         step_height *= -1
                     pyramid_stairs_terrain(terrain, step_width=0.31, step_height=step_height, platform_size=3.0)
                 elif choice < self.proportions[4]:
-                    discrete_obstacles_terrain(terrain, discrete_obstacles_height, 1.0, 2.0, 40, platform_size=3.0)
+                    #stairs_terrain(terrain, step_width=0.75, step_height=0.5)
+                    indoor_stairs_terrain(terrain, step_width=0.3, step_height=0.10)
+                    #indoor_stairs_terrain_w_middle(terrain, step_width=0.3, step_height=0.10)
+                    #0.1 0.005 80
+                    #print(terrain.horizontal_scale,terrain.vertical_scale,terrain.width)
+                    #discrete_obstacles_terrain(terrain, discrete_obstacles_height, 1.0, 2.0, 40, platform_size=3.0)
                 else:
+                    #stairs_terrain(terrain, step_width=0.8, step_height=step_height)
                     stepping_stones_terrain(
                         terrain, stone_size=stepping_stones_size, stone_distance=0.1, max_height=0.0, platform_size=3.0
                     )

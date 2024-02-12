@@ -226,7 +226,71 @@ def stairs_terrain(terrain, step_width, step_height):
         terrain.height_field_raw[i * step_width : (i + 1) * step_width, :] += height
         height += step_height
     return terrain
+def indoor_stairs_terrain(terrain, step_width, step_height):
+    """
+    Generate a stairs
 
+    Parameters:
+        terrain (terrain): the terrain
+        step_width (float):  the width of the step [meters]
+        step_height (float):  the height of the step [meters]
+    Returns:
+        terrain (SubTerrain): update terrain
+    """
+    #terrain.horizontal_scale = 0.1 
+    #terrian.vertical_scale = 0.005 
+    #terrain.width = 80
+    # switch parameters to discrete units
+    raw = step_height
+    step_width = int(step_width / terrain.horizontal_scale)
+    step_height = int(step_height / terrain.vertical_scale)
+    #step_width = int(step_width)
+    #step_height = int(step_height)
+    #num_steps = terrain.width // step_width #30 cm
+    num_steps = int(3 // raw)
+    height = step_height
+    for i in range(num_steps):
+        terrain.height_field_raw[i * step_width : (i + 1) * step_width, :] += height
+        if i == num_steps - 1:
+            terrain.height_field_raw[(i + 1) * step_width: (i + 1) * step_width * 2, :] += height
+        height += step_height
+    return terrain
+
+def indoor_stairs_terrain_w_middle(terrain, step_width, step_height):
+    """
+    Generate a stairs
+
+    Parameters:
+        terrain (terrain): the terrain
+        step_width (float):  the width of the step [meters]
+        step_height (float):  the height of the step [meters]
+    Returns:
+        terrain (SubTerrain): update terrain
+    """
+    #terrain.horizontal_scale = 0.1 
+    #terrian.vertical_scale = 0.005 
+    #terrain.width = 80
+    # switch parameters to discrete units
+    raw = step_height
+    step_width = int(step_width / terrain.horizontal_scale)
+    step_height = int(step_height / terrain.vertical_scale)
+    #step_width = int(step_width)
+    #step_height = int(step_height)
+    #num_steps = terrain.width // step_width #30 cm
+    num_steps_1 = int(1.5 // raw)
+    num_steps_2 = int(3//raw)
+    height = step_height
+    for i in range(num_steps_1):
+        terrain.height_field_raw[i * step_width : (i + 1) * step_width, :] += height
+        if i == num_steps_1 - 1:
+            terrain.height_field_raw[(i + 1) * step_width: (i + 1 + int(0.5/terrain.horizontal_scale)) * step_width, :] += height
+        height += step_height
+    for i in range(num_steps_1 + int(0.5/terrain.horizontal_scale), num_steps_2):
+        terrain.height_field_raw[i * step_width : (i + 1) * step_width, :] += height
+        if i == num_steps_2 - 1:
+            terrain.height_field_raw[(i + 1) * step_width: (i + 1) * step_width * 2, :] += height
+        height += step_height
+    return terrain
 
 def pyramid_stairs_terrain(terrain, step_width, step_height, platform_size=1.0):
     """

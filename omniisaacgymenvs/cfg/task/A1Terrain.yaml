@@ -20,7 +20,8 @@ env:
     numLevels: 10
     numTerrains: 20
     # terrain types: [smooth slope, rough slope, stairs up, stairs down, discrete]
-    terrainProportions: [0.1, 0.1, 0.35, 0.25, 0.2]
+    #terrainProportions: [0.1, 0.1, 0.35, 0.25, 0.2]
+    terrainProportions: [0.1, 0.0, 0.4, 0.3, 0.2]
     # tri mesh only:
     slopeTreshold: 0.5
 
@@ -85,7 +86,7 @@ env:
     angularVelocityZRewardScale: 0.5
     orientationRewardScale: -0.
     torqueRewardScale: -0.00002 #-0.00002 
-    jointAccRewardScale: -0.0005 #-0.00000025 #ori = -0.0005 #-0.00000025
+    jointAccRewardScale: -0.00000025  #-0.0005 ##ori = -0.0005 #-0.00000025
     baseHeightRewardScale: -0.0
     actionRateRewardScale: -0.01
     fallenOverRewardScale: -1.0
@@ -100,7 +101,7 @@ env:
     heightMeasurementScale: 5.0
 
     # noise 
-    addNoise: true
+    addNoise: false
     noiseLevel: 1.0 # scales other values
     dofPositionNoise: 0.01
     dofVelocityNoise: 1.5

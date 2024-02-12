@@ -488,7 +488,7 @@ class A1TerrainTask(RLTask):
         self.has_fallen = (torch.norm(self._a1s._base.get_net_contact_forces(clone=False), dim=1) > 1.0) | (
             torch.sum(knee_contact, dim=-1) > 1.0
         )
-        print("debug3=================",torch.count_nonzero(knee_contact,dim=0))
+        #print("debug3=================",knee_contact[:30])
         self.reset_buf = self.has_fallen.clone()
         self.reset_buf = torch.where(self.timeout_buf.bool(), torch.ones_like(self.reset_buf), self.reset_buf)
 

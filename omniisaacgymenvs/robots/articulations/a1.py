@@ -120,4 +120,4 @@ class A1(Robot):
                     rb = PhysxSchema.PhysxRigidBodyAPI.Get(stage, link_prim.GetPrimPath())
                     rb.CreateSleepThresholdAttr().Set(0)
                     cr_api = PhysxSchema.PhysxContactReportAPI.Apply(link_prim)
-                    cr_api.CreateThresholdAttr().Set(0)
+                    cr_api.CreateThresholdAttr().Set(1.0)
