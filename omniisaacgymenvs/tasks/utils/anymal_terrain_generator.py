@@ -142,11 +142,14 @@ class Terrain:
                 elif choice < self.proportions[3]:
                     if choice < self.proportions[2]:
                         step_height *= -1
-                    pyramid_stairs_terrain(terrain, step_width=0.31, step_height=step_height, platform_size=3.0)
+                        pyramid_stairs_terrain(terrain, step_width=0.31, step_height=0.03 + step_height, platform_size=3.0)
+                    else:
+                        pyramid_stairs_terrain(terrain, step_width=0.31, step_height=0.05 + step_height, platform_size=3.0)
                 elif choice < self.proportions[4]:
                     #stairs_terrain(terrain, step_width=0.75, step_height=0.5)
-                    indoor_stairs_terrain(terrain, step_width=0.3, step_height=0.10)
-                    #indoor_stairs_terrain_w_middle(terrain, step_width=0.3, step_height=0.10)
+                    #indoor_stairs_terrain(terrain, step_width=0.31, step_height=0.1 + (difficulty * 0.1))
+                    indoor_stairs_terrain(terrain, step_width=0.31, step_height=0.16)
+                    #indoor_stairs_terrain_w_middle(terrain, step_width=0.31, step_height=0.16)
                     #0.1 0.005 80
                     #print(terrain.horizontal_scale,terrain.vertical_scale,terrain.width)
                     #discrete_obstacles_terrain(terrain, discrete_obstacles_height, 1.0, 2.0, 40, platform_size=3.0)

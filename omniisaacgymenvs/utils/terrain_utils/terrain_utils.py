@@ -247,7 +247,7 @@ def indoor_stairs_terrain(terrain, step_width, step_height):
     #step_width = int(step_width)
     #step_height = int(step_height)
     #num_steps = terrain.width // step_width #30 cm
-    num_steps = int(3 // raw)
+    num_steps = int(2 // raw)
     height = step_height
     for i in range(num_steps):
         terrain.height_field_raw[i * step_width : (i + 1) * step_width, :] += height
@@ -277,7 +277,7 @@ def indoor_stairs_terrain_w_middle(terrain, step_width, step_height):
     #step_width = int(step_width)
     #step_height = int(step_height)
     #num_steps = terrain.width // step_width #30 cm
-    num_steps_1 = int(1.5 // raw)
+    num_steps_1 = int(1.25 // raw)
     num_steps_2 = int(3//raw)
     height = step_height
     for i in range(num_steps_1):

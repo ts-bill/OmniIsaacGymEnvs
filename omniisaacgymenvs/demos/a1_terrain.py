@@ -43,6 +43,8 @@ import carb
 from omni.kit.viewport.utility.camera_state import ViewportCameraState
 from omni.kit.viewport.utility import get_viewport_from_window_name
 from pxr import Sdf
+import csv
+
 
 
 class A1TerrainDemo(A1TerrainTask):
@@ -167,6 +169,7 @@ class A1TerrainDemo(A1TerrainTask):
         self.base_lin_vel = quat_rotate_inverse(self.base_quat, self.base_velocities[:, 0:3])
         self.base_ang_vel = quat_rotate_inverse(self.base_quat, self.base_velocities[:, 3:6])
         self.projected_gravity = quat_rotate_inverse(self.base_quat, self.gravity_vec)
+        
         forward = quat_apply(self.base_quat, self.forward_vec)
         heading = torch.atan2(forward[:, 1], forward[:, 0])
         self.commands[:, 2] = torch.clip(0.5*wrap_to_pi(self.commands[:, 3] - heading), -1., 1.)
@@ -174,10 +177,25 @@ class A1TerrainDemo(A1TerrainTask):
         self.check_termination()
 
         if self._selected_id is not None:
+            #print(self.base_lin_vel[self._selected_id])
             self.commands[self._selected_id, :] = torch.tensor(self._current_command, device=self.device)
             self.timeout_buf[self._selected_id] = 0
             self.reset_buf[self._selected_id] = 0
-
+            #### Save data
+            # with open('stair-case-I-0-15.csv', 'a+') as csvfile:
+            #     writer = csv.writer(csvfile)
+            #     writer.writerow([self._selected_id, 
+            #                      'speed',
+            #                      self.commands[self._selected_id].tolist()[0],
+            #                      self.base_lin_vel[self._selected_id].tolist()[0],
+            #                      'ang',
+            #                      self.commands[self._selected_id].tolist()[2],
+            #                      self.base_ang_vel[self._selected_id].tolist()[0],
+            #                      self.base_ang_vel[self._selected_id].tolist()[1],
+            #                      self.base_ang_vel[self._selected_id].tolist()[2],
+            #                      ])
+                #writer.writerow([self._selected_id, self.base_ang_vel[self._selected_id].tolist()[0], self.base_ang_vel[self._selected_id].tolist()[1],self.base_ang_vel[self._selected_id].tolist()[2]])
+        
         self.get_states()
 
         env_ids = self.reset_buf.nonzero(as_tuple=False).flatten()
