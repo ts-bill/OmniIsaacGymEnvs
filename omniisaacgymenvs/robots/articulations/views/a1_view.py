@@ -47,6 +47,14 @@ class A1View(ArticulationView):
             name=name,
             reset_xform_properties=False
         )
+        self._foot = RigidPrimView(
+            #prim_paths_expr="/World/envs/.*/a1_instanceable_meshes/trunk",
+            prim_paths_expr="/World/envs/.*/a1_instanceable_meshes/.*_calf",
+            name="foot_view", 
+            reset_xform_properties=False, 
+            track_contact_forces=track_contact_forces, 
+            prepare_contact_sensors=prepare_contact_sensors
+        )
         self._knees = RigidPrimView(
             prim_paths_expr="/World/envs/.*/a1_instanceable_meshes/.*_thigh",
             #prim_paths_expr="/World/envs/.*/a1_instanceable_meshes/.*_THIGH",

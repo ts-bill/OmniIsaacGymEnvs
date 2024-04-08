@@ -37,7 +37,7 @@ from omni.isaac.core.utils.torch.rotations import *
 from omniisaacgymenvs.tasks.base.rl_task import RLTask
 from omniisaacgymenvs.robots.articulations.a1 import A1
 from omniisaacgymenvs.robots.articulations.views.a1_view import A1View
-from omniisaacgymenvs.tasks.utils.anymal_terrain_generator import *
+from omniisaacgymenvs.tasks.utils.a1_terrain_generator import *
 from omniisaacgymenvs.utils.terrain_utils.terrain_utils import *
 from pxr import UsdLux, UsdPhysics
 
@@ -330,6 +330,9 @@ class A1TerrainTask(RLTask):
         self.knee_pos = torch.zeros((self.num_envs * 4, 3), dtype=torch.float, device=self.device)
         self.knee_quat = torch.zeros((self.num_envs * 4, 4), dtype=torch.float, device=self.device)
 
+        self.foot_pos = torch.zeros((self.num_envs * 4, 3), dtype=torch.float, device=self.device)
+        self.foot_quat = torch.zeros((self.num_envs * 4, 4), dtype=torch.float, device=self.device)
+
         indices = torch.arange(self._num_envs, dtype=torch.int64, device=self._device)
         self.reset_idx(indices)
         self.init_done = True
@@ -407,7 +410,8 @@ class A1TerrainTask(RLTask):
         self.base_pos, self.base_quat = self._a1s.get_world_poses(clone=False)
         self.base_velocities = self._a1s.get_velocities(clone=False)
         self.knee_pos, self.knee_quat = self._a1s._knees.get_world_poses(clone=False)
-        #print("debug1=================",self.knee_pos)
+        self.foot_pos, self.foot_quat = self._a1s._foot.get_world_poses(clone=False)
+        print("debug1=================",self.foot_pos)
 
     def pre_physics_step(self, actions):
         if not self.world.is_playing():
@@ -541,7 +545,7 @@ class A1TerrainTask(RLTask):
             + rew_orient # 0
             + rew_base_height # 0
             + rew_torque # -
-            + rew_joint_acc # -
+            + rew_joint_acc # ori:- , new:0
             + rew_action_rate # -
             + rew_hip # 0
             + rew_fallen_over

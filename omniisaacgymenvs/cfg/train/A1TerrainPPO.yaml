@@ -64,7 +64,7 @@ params:
     grad_norm: 1.
     horizon_length: 48 #24 #number of steps in each ep that algorithm uses for trainning
     #minibatch_size: 32768
-    minibatch_size:  96000  #96000 #48000 #24000 #480 #24000
+    minibatch_size:  48 #96000  #96000 #48000 #24000 #480 #24000
     #if headless=true 4500[216000] or 5000[240000] (>4000)
     #else <3000[144000]
     mini_epochs: 5
