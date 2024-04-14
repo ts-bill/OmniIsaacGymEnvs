@@ -72,9 +72,11 @@ class RLGPUAlgoObserver(AlgoObserver):
     def after_print_stats(self, frame, epoch_num, total_time):
         if self.ep_infos:
             for key in self.ep_infos[0]:
+                
                 infotensor = torch.tensor([], device=self.algo.device)
                 for ep_info in self.ep_infos:
                     # handle scalar and zero dimensional tensor infos
+                    #print(ep_info)
                     if not isinstance(ep_info[key], torch.Tensor):
                         ep_info[key] = torch.Tensor([ep_info[key]])
                     if len(ep_info[key].shape) == 0:

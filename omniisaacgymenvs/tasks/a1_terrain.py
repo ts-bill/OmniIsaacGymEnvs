@@ -59,6 +59,7 @@ class A1TerrainTask(RLTask):
 
         self.height_points = self.init_height_points()
         self.measured_heights = None
+        self.heights = None
         # joint positions offsets
         self.default_dof_pos = torch.zeros(
             (self.num_envs, 12), dtype=torch.float, device=self.device, requires_grad=False
@@ -74,6 +75,7 @@ class A1TerrainTask(RLTask):
             "torques": torch_zeros(),
             "joint_acc": torch_zeros(),
             "base_height": torch_zeros(),
+            "foot_clearance": torch_zeros(),
             "air_time": torch_zeros(),
             "collision": torch_zeros(),
             "stumble": torch_zeros(),
@@ -191,7 +193,52 @@ class A1TerrainTask(RLTask):
         points[:, :, 0] = grid_x.flatten()
         points[:, :, 1] = grid_y.flatten()
         return points
+    def get_heights_form_foot(self):
+        y = 0.1 * torch.tensor(
+            [0], device=self.device, requires_grad=False
+        ) 
+        x = 0.1 * torch.tensor(
+            [0], device=self.device, requires_grad=False
+        ) 
+        grid_x, grid_y = torch.meshgrid(x, y, indexing='ij')
 
+        terrain_points = grid_x.numel()
+        points = torch.zeros(self.num_envs, terrain_points, 3, device=self.device, requires_grad=False)
+        points[:, :, 0] = grid_x.flatten()
+        points[:, :, 1] = grid_y.flatten()
+
+        _points = quat_apply_yaw(self.foot_quat.repeat(1, terrain_points), points) + (
+                self.foot_pos[:, 0:3]
+        ).unsqueeze(1)
+
+        _points += self.terrain.border_size
+        _points = (_points / self.terrain.horizontal_scale).long()
+        px = _points[:, :, 0].view(-1)
+        py = _points[:, :, 1].view(-1)
+        px = torch.clip(px, 0, self.height_samples.shape[0] - 2)
+        py = torch.clip(py, 0, self.height_samples.shape[1] - 2)
+
+        heights1 = self.height_samples[px, py]
+
+        heights2 = self.height_samples[px + 1, py + 1]
+        heights = torch.min(heights1, heights2)
+
+        return heights.view(self.num_envs, -1) * self.terrain.vertical_scale
+    def get_ground_heights_below_foot(self):
+        _points = self.foot_pos.reshape(self.num_envs, 4, 3)
+        #points = self.foot_pos
+        #print(points)
+        _points = _points + self.terrain.border_size
+        _points = (_points / self.terrain.horizontal_scale).long()
+        px = _points[:, :, 0].view(-1)
+        py = _points[:, :, 1].view(-1)
+        px = torch.clip(px, 0, self.height_samples.shape[0] - 2)
+        py = torch.clip(py, 0, self.height_samples.shape[1] - 2)
+
+        heights1 = self.height_samples[px, py]
+        heights2 = self.height_samples[px + 1, py + 1]
+        heights = torch.min(heights1, heights2)
+        return heights.view(self.num_envs, -1) * self.terrain.vertical_scale
     def _create_trimesh(self, create_mesh=True):
         self.terrain = Terrain(self._task_cfg["env"]["terrain"], num_robots=self.num_envs)
         vertices = self.terrain.vertices
@@ -214,6 +261,7 @@ class A1TerrainTask(RLTask):
             track_contact_forces=True
         )
         scene.add(self._a1s)
+        scene.add(self._a1s._foot)
         scene.add(self._a1s._knees)
         scene.add(self._a1s._base)
 
@@ -228,12 +276,15 @@ class A1TerrainTask(RLTask):
             scene.remove_object("knees_view", registry_only=True)
         if scene.object_exists("base_view"):
             scene.remove_object("base_view", registry_only=True)
+        if scene.object_exists("foot_view"):
+            scene.remove_object("foot_view", registry_only=True)
         self._a1s = A1View(
             prim_paths_expr="/World/envs/.*/a1_instanceable_meshes", 
             name="a1view", 
             track_contact_forces=True
         )
         scene.add(self._a1s)
+        scene.add(self._a1s._foot)
         scene.add(self._a1s._knees)
         scene.add(self._a1s._base)
 
@@ -330,8 +381,8 @@ class A1TerrainTask(RLTask):
         self.knee_pos = torch.zeros((self.num_envs * 4, 3), dtype=torch.float, device=self.device)
         self.knee_quat = torch.zeros((self.num_envs * 4, 4), dtype=torch.float, device=self.device)
 
-        self.foot_pos = torch.zeros((self.num_envs * 4, 3), dtype=torch.float, device=self.device)
-        self.foot_quat = torch.zeros((self.num_envs * 4, 4), dtype=torch.float, device=self.device)
+        self.foot_pos = torch.zeros((self.num_envs * 4, 3), dtype=torch.float32, device=self.device)
+        self.foot_quat = torch.zeros((self.num_envs * 4, 4), dtype=torch.float32, device=self.device)
 
         indices = torch.arange(self._num_envs, dtype=torch.int64, device=self._device)
         self.reset_idx(indices)
@@ -410,9 +461,23 @@ class A1TerrainTask(RLTask):
         self.base_pos, self.base_quat = self._a1s.get_world_poses(clone=False)
         self.base_velocities = self._a1s.get_velocities(clone=False)
         self.knee_pos, self.knee_quat = self._a1s._knees.get_world_poses(clone=False)
-        self.foot_pos, self.foot_quat = self._a1s._foot.get_world_poses(clone=False)
-        print("debug1=================",self.foot_pos)
-
+        self.foot_pos,self.foot_quat = self._a1s._foot.get_world_poses(clone=False)
+        self.foot_velocities = self._a1s._foot.get_velocities(clone=False)
+        #print("foot pose = ", self.foot_pos[:,2] - self.get_ground_heights_below_foot().flatten())
+        #------------------------
+        # print("foot x = ", self.foot_pos[:,0][2])
+        # print("foot y = ", self.foot_pos[:,1][2])
+        # print("foot z = ", self.foot_pos[:,2][2])
+        # #test = self.foot_pos.reshape(self.num_envs, 4, 3)
+        # #print("foot z = ", self.foot_pos)
+        # print("Terrain Height = ", self.get_ground_heights_below_foot()[2])
+       #print("difference = " , self.foot_pos[:,2] , "-", self.get_ground_heights_below_foot().flatten(), "=", self.foot_pos[:,2] - self.get_ground_heights_below_foot().flatten())
+        # print("foot z = ", self.foot_pos[:,2][2])
+        # #test2 = self.foot_pos.reshape(self.num_envs, 4, 3)
+        # print("Terrain Height = ", self.get_ground_heights_below_foot()[2])
+        # print("foot z = ", self.foot_pos[:,2][2])
+        #print("foot pose = ", self.foot_pos[:,2][2], self.get_ground_heights_below_foot()[2].flatten())
+        # print("foot vel = ", self.foot_velocities[2, 0:3])
     def pre_physics_step(self, actions):
         if not self.world.is_playing():
             return
@@ -447,8 +512,10 @@ class A1TerrainTask(RLTask):
             # prepare quantities
             #print("debug2222=================",self.base_quat[0],self.base_velocities[0])
             self.base_lin_vel = quat_rotate_inverse(self.base_quat, self.base_velocities[:, 0:3])
+            #print("debug2222=================",self.base_lin_vel[0],self.base_quat[0],self.base_velocities[0,0:3])
             self.base_ang_vel = quat_rotate_inverse(self.base_quat, self.base_velocities[:, 3:6])
             self.projected_gravity = quat_rotate_inverse(self.base_quat, self.gravity_vec)
+            self.foot_lin_vel = quat_rotate_inverse(self.foot_quat, self.foot_velocities[:, 0:3])
             #print("debug3=================",self.base_lin_vel)           
             forward = quat_apply(self.base_quat, self.forward_vec)
             heading = torch.atan2(forward[:, 1], forward[:, 0])
@@ -536,6 +603,10 @@ class A1TerrainTask(RLTask):
             torch.sum(torch.abs(self.dof_pos - self.default_dof_pos), dim=1) * (torch.norm(self.commands[:, :2], dim=1) < 0.1)
         )
 
+        rew_foot_clearance = (
+            torch.sum(torch.square(self.foot_pos[:,2] - 0.1) * torch.sqrt((torch.norm(self.foot_lin_vel[:, :2], dim=1)))) * -0.00005
+        )
+        #print(self.foot_pos[:,2][2] - 0.2)
         # total reward
         self.rew_buf = (
             rew_lin_vel_xy # +
@@ -549,7 +620,8 @@ class A1TerrainTask(RLTask):
             + rew_action_rate # -
             + rew_hip # 0
             + rew_fallen_over
-            #+ rew_stand_still
+            + rew_foot_clearance
+            + rew_stand_still
         )
         self.rew_buf = torch.clip(self.rew_buf, min=0.0, max=None)
 
@@ -566,11 +638,12 @@ class A1TerrainTask(RLTask):
         self.episode_sums["joint_acc"] += rew_joint_acc
         self.episode_sums["action_rate"] += rew_action_rate
         self.episode_sums["base_height"] += rew_base_height
+        self.episode_sums["foot_clearance"] += rew_foot_clearance
         self.episode_sums["hip"] += rew_hip
 
     def get_observations(self):
         self.measured_heights = self.get_heights()
-        heights = (
+        self.heights = (
             torch.clip(self.base_pos[:, 2].unsqueeze(1) - 0.5 - self.measured_heights, -1, 1.0) * self.height_meas_scale
         )
         self.obs_buf = torch.cat(
@@ -581,7 +654,7 @@ class A1TerrainTask(RLTask):
                 self.commands[:, :3] * self.commands_scale,
                 self.dof_pos * self.dof_pos_scale,
                 self.dof_vel * self.dof_vel_scale,
-                heights,
+                self.heights,
                 self.actions,
             ),
             dim=-1,
