@@ -148,7 +148,7 @@ class Terrain:
                 elif choice < self.proportions[4]:
                     #stairs_terrain(terrain, step_width=0.75, step_height=0.5)
                     #indoor_stairs_terrain(terrain, step_width=0.31, step_height=0.1 + (difficulty * 0.1))
-                    indoor_stairs_terrain(terrain, step_width=0.31, step_height=0.16)
+                    indoor_stairs_terrain(terrain, step_width=0.3, step_height=0.1, finish_floor = 3.0)
                     #indoor_stairs_terrain_w_middle(terrain, step_width=0.31, step_height=0.16)
                     #0.1 0.005 80
                     #print(terrain.horizontal_scale,terrain.vertical_scale,terrain.width)

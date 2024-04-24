@@ -309,7 +309,10 @@ class A1TerrainTask(RLTask):
         a1 = A1(
             prim_path=self.default_zero_env_path + "/a1_instanceable_meshes",
             name="A1",
-            usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/omniverse_a1/a1_instanceable.usd",
+            #====for window====
+            usd_path="C:/Users/tanaw/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/omniverse_a1/a1_window_instanceable.usd",
+            #====for linux====
+            #usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/omniverse_a1/a1_instanceable.usd",
             #usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/new/a1.usd",
             #usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/Robots_for_Omniverse/openUSD_assets/UnitreeRobotics/a1/a1.usd",
             #usd_path="/home/com-27x/OmniIsaacGymEnvs/omniisaacgymenvs/asset/a1/test4.usd", #file name
