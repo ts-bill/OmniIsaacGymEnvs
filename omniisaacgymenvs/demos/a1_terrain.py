@@ -27,7 +27,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from omniisaacgymenvs.tasks.a1_terrain import A1TerrainTask, wrap_to_pi
-
 from omni.isaac.core.utils.prims import get_prim_at_path
 from omni.isaac.core.utils.stage import get_current_stage
 from omni.isaac.core.utils.torch.rotations import *
@@ -70,6 +69,8 @@ class A1TerrainDemo(A1TerrainTask):
         self._prim_selection = omni.usd.get_context().get_selection()
         self._selected_id = None
         self._previous_selected_id = None
+        self._record = False
+        
         return
     
     def create_camera(self):
@@ -103,6 +104,7 @@ class A1TerrainDemo(A1TerrainTask):
         }
 
     def _on_keyboard_event(self, event, *args, **kwargs):
+        #print(event.input.name)
         if event.type == carb.input.KeyboardEventType.KEY_PRESS:
             if event.input.name in self._key_to_control:
                 self._current_command = self._key_to_control[event.input.name]
@@ -114,6 +116,12 @@ class A1TerrainDemo(A1TerrainTask):
                         self.view_port.set_active_camera(self.perspective_path)
                     else:
                         self.view_port.set_active_camera(self.camera_path)
+            elif event.input.name == "R":
+                self._record = not self._record
+                if self._record:
+                    print("recording....")
+                else:
+                    print("stop record")
         elif event.type == carb.input.KeyboardEventType.KEY_RELEASE:
             self._current_command = [0.0, 0.0, 0.0, 0.0]
 
@@ -154,6 +162,7 @@ class A1TerrainDemo(A1TerrainTask):
         camera_state.set_target_world(target, True)
 
     def post_physics_step(self):
+        _sc = omni.isaac.core.SimulationContext()
         self.progress_buf[:] += 1
 
         self.refresh_dof_state_tensors()
@@ -177,24 +186,26 @@ class A1TerrainDemo(A1TerrainTask):
         self.check_termination()
 
         if self._selected_id is not None:
-            #print(self.base_lin_vel[self._selected_id])
+            #print(self._record)
             self.commands[self._selected_id, :] = torch.tensor(self._current_command, device=self.device)
             self.timeout_buf[self._selected_id] = 0
             self.reset_buf[self._selected_id] = 0
             #### Save data
-            # with open('stair-case-I-0-15.csv', 'a+') as csvfile:
-            #     writer = csv.writer(csvfile)
-            #     writer.writerow([self._selected_id, 
-            #                      'speed',
-            #                      self.commands[self._selected_id].tolist()[0],
-            #                      self.base_lin_vel[self._selected_id].tolist()[0],
-            #                      'ang',
-            #                      self.commands[self._selected_id].tolist()[2],
-            #                      self.base_ang_vel[self._selected_id].tolist()[0],
-            #                      self.base_ang_vel[self._selected_id].tolist()[1],
-            #                      self.base_ang_vel[self._selected_id].tolist()[2],
-            #                      ])
-                #writer.writerow([self._selected_id, self.base_ang_vel[self._selected_id].tolist()[0], self.base_ang_vel[self._selected_id].tolist()[1],self.base_ang_vel[self._selected_id].tolist()[2]])
+            if self._record:
+                with open('stair-case-II-0-15.csv', 'a+') as csvfile:
+                    writer = csv.writer(csvfile)
+                    writer.writerow([_sc.current_time,
+                                    self._selected_id, 
+                                    'speed',
+                                    self.commands[self._selected_id].tolist()[0],
+                                    self.base_lin_vel[self._selected_id].tolist()[0],
+                                    'ang',
+                                    self.commands[self._selected_id].tolist()[2],
+                                    self.base_ang_vel[self._selected_id].tolist()[0],
+                                    self.base_ang_vel[self._selected_id].tolist()[1],
+                                    self.base_ang_vel[self._selected_id].tolist()[2],
+                                    ])
+                    #writer.writerow([self._selected_id, self.base_ang_vel[self._selected_id].tolist()[0], self.base_ang_vel[self._selected_id].tolist()[1],self.base_ang_vel[self._selected_id].tolist()[2]])
         
         self.get_states()
 

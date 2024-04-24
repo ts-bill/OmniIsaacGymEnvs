@@ -76,6 +76,8 @@ class A1TerrainTask(RLTask):
             "joint_acc": torch_zeros(),
             "base_height": torch_zeros(),
             "foot_clearance": torch_zeros(),
+            "foot_slip": torch_zeros(),
+            "stand_still": torch_zeros(),
             "air_time": torch_zeros(),
             "collision": torch_zeros(),
             "stumble": torch_zeros(),
@@ -553,7 +555,7 @@ class A1TerrainTask(RLTask):
         
         knee_contact = (
             torch.norm(self._a1s._knees.get_net_contact_forces(clone=False).view(self._num_envs, 4, 3), dim=-1)
-            > 1.0
+            > 0.5 #1.0
         )
         
         self.has_fallen = (torch.norm(self._a1s._base.get_net_contact_forces(clone=False), dim=1) > 1.0) | (
@@ -578,7 +580,7 @@ class A1TerrainTask(RLTask):
         rew_orient = torch.sum(torch.square(self.projected_gravity[:, :2]), dim=1) * self.rew_scales["orient"]
 
         # base height penalty #0.25
-        rew_base_height = torch.square(self.base_pos[:, 2] - 0.25) * self.rew_scales["base_height"] # Anymal 0.52
+        rew_base_height = torch.square(self.base_pos[:, 2] - 0.3) * self.rew_scales["base_height"] # Anymal 0.52
 
         # torque penalty
         rew_torque = torch.sum(torch.square(self.torques), dim=1) * self.rew_scales["torque"]
@@ -600,11 +602,22 @@ class A1TerrainTask(RLTask):
         )
 
         rew_stand_still = (
-            torch.sum(torch.abs(self.dof_pos - self.default_dof_pos), dim=1) * (torch.norm(self.commands[:, :2], dim=1) < 0.1)
+            torch.sum(torch.abs(self.dof_pos - self.default_dof_pos), dim=1) * (torch.norm(self.commands[:, :2], dim=1) < 0.1) * 0.0
         )
-
+        foot_contact = (
+            self._a1s._foot.get_net_contact_forces(clone=False)[:,2].view(self._num_envs, 4) > 0.0
+        )
+        #self.base_pos[:, 2].unsqueeze(1) 
+        #print(torch.sqrt((torch.norm(self.foot_lin_vel[:, :2], dim=1))))
+        #print(foot_contact.shape,foot_contact,self.foot_pos[:,2])
         rew_foot_clearance = (
-            torch.sum(torch.square(self.foot_pos[:,2] - 0.1) * torch.sqrt((torch.norm(self.foot_lin_vel[:, :2], dim=1)))) * -0.00005
+            #torch.sum(~foot_contact.flatten() * torch.square(self.foot_pos[:,2] - 0.2) * torch.sqrt((torch.norm(self.foot_lin_vel[:, :2], dim=1)))) * -0.00005 #0.0 #
+            torch.sum(~foot_contact.flatten() * torch.square(self.foot_pos[:,2] - 0.2) * torch.sqrt((torch.norm(self.foot_velocities[:, :2], dim=1)))) * -0.000005 #0.0 #
+        )
+        #print(rew_foot_clearance)
+
+        rew_foot_slip = (
+            torch.sum(foot_contact.flatten() * torch.square((torch.norm(self.foot_lin_vel[:, :2], dim=1)))) * 0.0 #-0.000008
         )
         #print(self.foot_pos[:,2][2] - 0.2)
         # total reward
@@ -621,7 +634,9 @@ class A1TerrainTask(RLTask):
             + rew_hip # 0
             + rew_fallen_over
             + rew_foot_clearance
+            + rew_foot_slip
             + rew_stand_still
+            
         )
         self.rew_buf = torch.clip(self.rew_buf, min=0.0, max=None)
 
@@ -639,6 +654,8 @@ class A1TerrainTask(RLTask):
         self.episode_sums["action_rate"] += rew_action_rate
         self.episode_sums["base_height"] += rew_base_height
         self.episode_sums["foot_clearance"] += rew_foot_clearance
+        self.episode_sums["foot_slip"] += rew_foot_slip
+        self.episode_sums["stand_still"] += rew_stand_still
         self.episode_sums["hip"] += rew_hip
 
     def get_observations(self):

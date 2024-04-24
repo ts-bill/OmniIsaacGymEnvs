@@ -300,7 +300,7 @@ def indoor_stairs_terrain_w_middle(terrain, step_width, step_height):
     """
     Generate a stairs
 
-    Parameters:
+    Parameters:f
         terrain (terrain): the terrain
         step_width (float):  the width of the step [meters]
         step_height (float):  the height of the step [meters]

@@ -49,7 +49,7 @@ class A1View(ArticulationView):
         )
         self._foot = RigidPrimView(
             #prim_paths_expr="/World/envs/.*/a1_instanceable_meshes/trunk",
-            prim_paths_expr="/World/envs/.*/a1_instanceable_meshes/.*_calf",
+            prim_paths_expr="/World/envs/.*/a1_instanceable_meshes/.*_foot",
             name="foot_view", 
             reset_xform_properties=False, 
             track_contact_forces=track_contact_forces, 
