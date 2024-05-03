@@ -20,11 +20,12 @@ env:
     numLevels: 10 #จำนวน level แนวตั้ง
     numTerrains: 20 # จำนวนแนวนอน
     # terrain types: [smooth slope, rough slope, stairs up, stairs down, discrete]
-    # for test
-    terrainProportions: [0.1, 0.1, 0.35, 0.35, 0.1]
+    # for train
+    terrainProportions: [0.1, 0.0, 0.35, 0.3, 0.2, 0.0, 0.05]
     #terrainProportions: [0.1, 0.1, 0.35, 0.25, 0.2]
     # for train
     #terrainProportions: [0.1, 0.1, 0.3, 0.3, 0.2]
+    #terrainProportions: [0.1, 0.0, 0.35, 0.3, 0.2, 0.0, 0.05]
     # tri mesh only:
     slopeTreshold: 0.5
 
@@ -83,15 +84,15 @@ env:
   learn:
     # rewards
     terminalReward: 0.0
-    linearVelocityXYRewardScale: 2.0 # ori=1.0
+    linearVelocityXYRewardScale: 1.5 # ori=1.0
     linearVelocityZRewardScale: -4.0 # -4.0
     angularVelocityXYRewardScale: -0.05 # -0.05
     angularVelocityZRewardScale: 0.5
-    orientationRewardScale: -0.
+    orientationRewardScale: -0.0
     torqueRewardScale: -0.00002 #-0.00002 
     jointAccRewardScale: -0.00000025  #-0.0005 ##ori = -0.0005 #-0.00000025
     baseHeightRewardScale: -0.0
-    actionRateRewardScale: -0.01
+    actionRateRewardScale: -0.01 #-0.01
     fallenOverRewardScale: -1.0
     # cosmetics
     hipRewardScale: -0. #25 

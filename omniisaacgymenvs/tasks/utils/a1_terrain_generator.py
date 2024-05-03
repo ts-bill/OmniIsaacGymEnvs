@@ -162,7 +162,31 @@ class Terrain:
                     ### ----------------- For traning -----------------
                     #updown_stairs_terrain(terrain, step_width=0.30, step_height=0.1 + (difficulty * 0.1))
                     
-                    #discrete_obstacles_terrain(terrain, discrete_obstacles_height, 1.0, 2.0, 40, platform_size=3.0)
+                    discrete_obstacles_terrain(terrain, discrete_obstacles_height, 1.0, 2.0, 40, platform_size=3.0)
+
+                elif choice < self.proportions[5]:
+                    ### ----------------- For Test -----------------
+                    #print(terrain.horizontal_scale,terrain.vertical_scale,terrain.width)
+                    #output 0.1 0.005 80
+                    #print(step_height)
+                    #stairs_terrain(terrain, step_width=0.27, step_height=0.15)
+                    #stairs_terrain(terrain, step_width=0.75, step_height=0.5)
+                    #indoor_stairs_terrain_w_middle(terrain, step_width=0.30, step_height=0.15)
+                    ### ----------------- For Use -----------------
+                    #indoor_stairs_terrain(terrain, step_width=0.3, step_height=0.1  + (difficulty * 0.1), finish_floor = 2.0, floor_width = 1.0)
+                    #indoor_stairs_terrain_w_middle(terrain, step_width=0.30, step_height=0.15)
+                    ### ----------------- For traning -----------------
+                    updown_stairs_terrain(terrain, step_width=0.30, step_height=0.1 + (difficulty * 0.1))
+                    
+                #     #discrete_obstacles_terrain(terrain, discrete_obstacles_height, 1.0, 2.0, 40, platform_size=3.0)
+                # else:
+                #     #stairs_terrain(terrain, step_width=0.8, step_height=step_height)
+                #     stepping_stones_terrain(
+                #         terrain, stone_size=stepping_stones_size, stone_distance=0.1, max_height=0.0, platform_size=3.0
+                #     )
+                #                 pyramid_stairs_terrain(terrain, step_width=0.31, step_height=0.05 + step_height, platform_size=3.0)
+                elif choice < self.proportions[6]:
+                    indoor_stairs_terrain(terrain, step_width=0.3, step_height=0.1  + (difficulty * 0.1), finish_floor = 2.0, floor_width = 1.0)
                 else:
                     #stairs_terrain(terrain, step_width=0.8, step_height=step_height)
                     stepping_stones_terrain(
@@ -187,4 +211,12 @@ class Terrain:
                 y1 = int((self.env_width / 2.0 - 1) / self.horizontal_scale)
                 y2 = int((self.env_width / 2.0 + 1) / self.horizontal_scale)
                 env_origin_z = np.max(terrain.height_field_raw[x1:x2, y1:y2]) * self.vertical_scale
-                self.env_origins[i, j] = [env_origin_x, env_origin_y, env_origin_z]
+                if j < 19:
+                    self.env_origins[i, j] = [env_origin_x, env_origin_y, env_origin_z]
+                else:
+                    last_x1 = int(0.0 / self.horizontal_scale)
+                    last_x2 = int(1.0 / self.horizontal_scale)
+                    last_env_origin_x = (i +  0.1) * self.env_length
+                    last_env_origin_z = np.max(terrain.height_field_raw[last_x1:last_x2, y1:y2]) * self.vertical_scale
+                    self.env_origins[i, j] = [last_env_origin_x, env_origin_y, last_env_origin_z - 0.05]
+                print(env_origin_x, env_origin_y, env_origin_z, i, j)

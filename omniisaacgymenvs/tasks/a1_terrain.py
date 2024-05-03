@@ -386,8 +386,8 @@ class A1TerrainTask(RLTask):
         self.knee_pos = torch.zeros((self.num_envs * 4, 3), dtype=torch.float, device=self.device)
         self.knee_quat = torch.zeros((self.num_envs * 4, 4), dtype=torch.float, device=self.device)
 
-        self.foot_pos = torch.zeros((self.num_envs * 4, 3), dtype=torch.float32, device=self.device)
-        self.foot_quat = torch.zeros((self.num_envs * 4, 4), dtype=torch.float32, device=self.device)
+        self.foot_pos = torch.zeros((self.num_envs * 4, 3), dtype=torch.float, device=self.device)
+        self.foot_quat = torch.zeros((self.num_envs * 4, 4), dtype=torch.float, device=self.device)
 
         indices = torch.arange(self._num_envs, dtype=torch.int64, device=self._device)
         self.reset_idx(indices)
@@ -493,8 +493,8 @@ class A1TerrainTask(RLTask):
                 torques = torch.clip(
                     self.Kp * (self.action_scale * self.actions + self.default_dof_pos - self.dof_pos)
                     - self.Kd * self.dof_vel,
-                    -33.5, #torch.tensor([-20.0, -20.0, -20.0, -20.0, -55.0, -55.0, -55.0, -55.0, -55.0, -55.0, -55.0, -55.0], dtype=torch.float, device=self.device), #Change
-                    33.5, #torch.tensor([20.0, 20.0, 20.0, 20.0, 55.0, 55.0, 55.0, 55.0, 55.0, 55.0, 55.0, 55.0], dtype=torch.float, device=self.device), #Change
+                    -33.5, #33.5 #torch.tensor([-20.0, -20.0, -20.0, -20.0, -55.0, -55.0, -55.0, -55.0, -55.0, -55.0, -55.0, -55.0], dtype=torch.float, device=self.device), #Change
+                    33.5, #33.5 #torch.tensor([20.0, 20.0, 20.0, 20.0, 55.0, 55.0, 55.0, 55.0, 55.0, 55.0, 55.0, 55.0], dtype=torch.float, device=self.device), #Change
                 )
                 #print("Debug==========================================",self.torques[0])
                 self._a1s.set_joint_efforts(torques)
@@ -558,11 +558,11 @@ class A1TerrainTask(RLTask):
         
         knee_contact = (
             torch.norm(self._a1s._knees.get_net_contact_forces(clone=False).view(self._num_envs, 4, 3), dim=-1)
-            > 0.5 #1.0
+            > 1.0 #0.5 #1.0
         )
         
         self.has_fallen = (torch.norm(self._a1s._base.get_net_contact_forces(clone=False), dim=1) > 1.0) | (
-            torch.sum(knee_contact, dim=-1) > 1.0
+            torch.sum(knee_contact, dim=-1) > 1.0 #1.0 #1.0
         )
         #print("debug3=================",knee_contact[:30])
         self.reset_buf = self.has_fallen.clone()
@@ -584,10 +584,10 @@ class A1TerrainTask(RLTask):
 
         # base height penalty #0.25
         rew_base_height = torch.square(self.base_pos[:, 2] - 0.3) * self.rew_scales["base_height"] # Anymal 0.52
-
+        #- self.get_ground_heights_below_base()
+        #print(self.base_pos[:, 2].shape())
         # torque penalty
         rew_torque = torch.sum(torch.square(self.torques), dim=1) * self.rew_scales["torque"]
-
         # joint acc penalty
         rew_joint_acc = torch.sum(torch.square(self.last_dof_vel - self.dof_vel), dim=1) * self.rew_scales["joint_acc"]
 
@@ -615,10 +615,11 @@ class A1TerrainTask(RLTask):
         #print(foot_contact.shape,foot_contact,self.foot_pos[:,2])
         rew_foot_clearance = (
             #torch.sum(~foot_contact.flatten() * torch.square(self.foot_pos[:,2] - 0.2) * torch.sqrt((torch.norm(self.foot_lin_vel[:, :2], dim=1)))) * -0.00005 #0.0 #
-            torch.sum(~foot_contact.flatten() * torch.square(self.foot_pos[:,2] - 0.2) * torch.sqrt((torch.norm(self.foot_velocities[:, :2], dim=1)))) * -0.000005 #0.0 #
+            torch.sum(~foot_contact.flatten() * torch.square(self.foot_pos[:,2] - 0.25) * torch.sqrt((torch.norm(self.foot_velocities[:, :2], dim=1)))) * 0.0# -0.000005 #0.0 #
+            #torch.sum(~foot_contact.flatten() * torch.square(self.foot_pos[:,2] - self.get_ground_heights_below_foot().flatten() - 0.01) * torch.sqrt((torch.norm(self.foot_velocities[:, :2], dim=1)))) * -0.000005
         )
         #print(rew_foot_clearance)
-
+        #print(self.get_ground_heights_below_base()[2],self.base_pos[:, 2][2] - self.get_ground_heights_below_base()[2])
         rew_foot_slip = (
             torch.sum(foot_contact.flatten() * torch.square((torch.norm(self.foot_lin_vel[:, :2], dim=1)))) * 0.0 #-0.000008
         )
@@ -695,11 +696,11 @@ class A1TerrainTask(RLTask):
         return heights.view(self.num_envs, -1) * self.terrain.vertical_scale
 
     def get_ground_heights_below_base(self):
-        points = self.base_pos.reshape(self.num_envs, 1, 3)
-        points += self.terrain.border_size
-        points = (points / self.terrain.horizontal_scale).long()
-        px = points[:, :, 0].view(-1)
-        py = points[:, :, 1].view(-1)
+        base_points = self.base_pos.reshape(self.num_envs, 1, 3)
+        base_points += self.terrain.border_size
+        base_points = (base_points / self.terrain.horizontal_scale).long()
+        px = base_points[:, :, 0].view(-1)
+        py = base_points[:, :, 1].view(-1)
         px = torch.clip(px, 0, self.height_samples.shape[0] - 2)
         py = torch.clip(py, 0, self.height_samples.shape[1] - 2)
 
