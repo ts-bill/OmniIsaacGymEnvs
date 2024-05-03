@@ -226,7 +226,7 @@ def stairs_terrain(terrain, step_width, step_height):
         terrain.height_field_raw[i * step_width : (i + 1) * step_width, :] += height
         height += step_height
     return terrain
-def indoor_stairs_terrain(terrain, step_width, step_height, finish_floor):
+def indoor_stairs_terrain(terrain, step_width, step_height, finish_floor, floor_width):
     """
     Generate a stairs
 
@@ -247,9 +247,10 @@ def indoor_stairs_terrain(terrain, step_width, step_height, finish_floor):
     max_height = ceil(max_height / terrain.vertical_scale)
     step_width = ceil(step_width / terrain.horizontal_scale)
     step_height = ceil(step_height / terrain.vertical_scale)
+    floor_width = ceil(floor_width / terrain.horizontal_scale)
     #step_width = int(step_width)
     #step_height = int(step_height)
-    num_steps = terrain.width // step_width #30 cm
+    num_steps = (terrain.width - floor_width) // step_width #30 cm
     finish_floor_width = int(finish_floor / terrain.horizontal_scale) // step_width
     height = step_height
     for i in range(num_steps):
@@ -283,7 +284,8 @@ def updown_stairs_terrain(terrain, step_width, step_height):
     #step_width = int(step_width)
     #step_height = int(step_height)
     landing_floor_width = ceil(2.0 / terrain.horizontal_scale)
-    num_steps = (terrain.width - landing_floor_width) // step_width #30 cm
+    floor_width = ceil(1.0 / terrain.horizontal_scale)
+    num_steps = (terrain.width - landing_floor_width - floor_width) // step_width #30 cm
     num_steps = int(num_steps/2)
     height = step_height
     for i in range(num_steps):
