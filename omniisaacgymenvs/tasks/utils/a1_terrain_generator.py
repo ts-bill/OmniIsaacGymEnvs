@@ -152,14 +152,15 @@ class Terrain:
                     #print(terrain.horizontal_scale,terrain.vertical_scale,terrain.width)
                     #output 0.1 0.005 80
                     #print(step_height)
-                    #stairs_terrain(terrain, step_width=0.27, step_height=0.15)
+                    #indoor_stairs_terrain(terrain, step_width=0.3, step_height=0.2, finish_floor = 3.0)
+                    indoor_stairs_terrain(terrain, step_width=0.3, step_height=0.2, finish_floor = 3.0)
                     #stairs_terrain(terrain, step_width=0.75, step_height=0.5)
                     #indoor_stairs_terrain_w_middle(terrain, step_width=0.30, step_height=0.15)
                     ### ----------------- For Use -----------------
                     #indoor_stairs_terrain(terrain, step_width=0.3, step_height=0.1, finish_floor = 3.0)
                     #indoor_stairs_terrain_w_middle(terrain, step_width=0.30, step_height=0.15)
                     ### ----------------- For traning -----------------
-                    updown_stairs_terrain(terrain, step_width=0.30, step_height=0.1 + (difficulty * 0.1))
+                    #updown_stairs_terrain(terrain, step_width=0.30, step_height=0.1 + (difficulty * 0.1))
                     
                     #discrete_obstacles_terrain(terrain, discrete_obstacles_height, 1.0, 2.0, 40, platform_size=3.0)
                 else:
