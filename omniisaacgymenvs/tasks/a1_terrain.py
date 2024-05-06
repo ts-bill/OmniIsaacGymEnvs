@@ -613,6 +613,7 @@ class A1TerrainTask(RLTask):
         #self.base_pos[:, 2].unsqueeze(1) 
         #print(torch.sqrt((torch.norm(self.foot_lin_vel[:, :2], dim=1))))
         #print(foot_contact.shape,foot_contact,self.foot_pos[:,2])
+        print(self.foot_pos[:,2][:3], self.get_ground_heights_below_foot().flatten()[:3])
         rew_foot_clearance = (
             #torch.sum(~foot_contact.flatten() * torch.square(self.foot_pos[:,2] - 0.2) * torch.sqrt((torch.norm(self.foot_lin_vel[:, :2], dim=1)))) * -0.00005 #0.0 #
             torch.sum(~foot_contact.flatten() * torch.square(self.foot_pos[:,2] - 0.25) * torch.sqrt((torch.norm(self.foot_velocities[:, :2], dim=1)))) * 0.0# -0.000005 #0.0 #

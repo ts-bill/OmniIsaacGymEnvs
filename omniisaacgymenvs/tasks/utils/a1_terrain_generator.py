@@ -153,7 +153,7 @@ class Terrain:
                     #output 0.1 0.005 80
                     #print(step_height)
                     #indoor_stairs_terrain(terrain, step_width=0.3, step_height=0.2, finish_floor = 3.0)
-                    indoor_stairs_terrain(terrain, step_width=0.3, step_height=0.2, finish_floor = 3.0)
+                    #indoor_stairs_terrain(terrain, step_width=0.3, step_height=0.2, finish_floor = 3.0, floor_width=1.0)
                     #stairs_terrain(terrain, step_width=0.75, step_height=0.5)
                     #indoor_stairs_terrain_w_middle(terrain, step_width=0.30, step_height=0.15)
                     ### ----------------- For Use -----------------
@@ -186,7 +186,10 @@ class Terrain:
                 #     )
                 #                 pyramid_stairs_terrain(terrain, step_width=0.31, step_height=0.05 + step_height, platform_size=3.0)
                 elif choice < self.proportions[6]:
-                    indoor_stairs_terrain(terrain, step_width=0.3, step_height=0.1  + (difficulty * 0.1), finish_floor = 2.0, floor_width = 1.0)
+                    #-----------for test----------------
+                    indoor_stairs_terrain(terrain, step_width=0.4, step_height=0.2, finish_floor = 3.0, floor_width=1.0)
+                    #-----------for train----------------
+                    #indoor_stairs_terrain(terrain, step_width=0.3, step_height=0.1  + (difficulty * 0.1), finish_floor = 2.0, floor_width = 1.0)
                 else:
                     #stairs_terrain(terrain, step_width=0.8, step_height=step_height)
                     stepping_stones_terrain(
